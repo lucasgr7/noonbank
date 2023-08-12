@@ -1,8 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Abel&display=swap");
 
 :root {
+  html{
+    height: 100%;
+  }
   body {
-    background-color: rgba(244, 245, 240, 1);
+    // background gradient green
+    background: linear-gradient(230deg, #a3f2e3 0%, #159c6d 100%);
     font-family: 'Abel', sans-serif;
+    height: 100%;
   }
 }

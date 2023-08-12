@@ -1,15 +1,3 @@
-from pynubank import Nubank, MockHttpClient
-
-nu = Nubank()
-
-uuid, qr_code = nu.get_qr_code()
-qr_code.print_ascii(invert=True)
-input('Após escanear o QRCode pressione enter para continuar')
-
-nu.authenticate_with_qr_code('<cpf>', '<password>', uuid)
-
-# Lista de dicionários contendo todas as transações de seu cartão de crédito
-card_statements = nu.authenticate_with_cert()
 
 # Retorna um dicionário contendo os detalhes de uma transação retornada por get_card_statements()
 # Contém as parcelas da transação
