@@ -16,6 +16,7 @@ yarn.lock
 
 # Editor directories and files
 .vscode/*
+myenv/
 !.vscode/extensions.json
 .idea
 .DS_Store
@@ -26,3 +27,5 @@ yarn.lock
 *.sw?
 *.pyc
 *.pkl
+*.p12
+*.run.py

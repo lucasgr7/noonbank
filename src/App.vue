@@ -24,5 +24,6 @@ import TableTransactions from './components/TableTransactions.vue';
   .el-card{
     border-radius: 5px;
     background: rgba(244, 245, 240, 1);
+    background: linear-gradient(0deg, rgb(213, 214, 207) 0%, rgba(244, 245, 240, 1) 100%);
   }
 </style>s

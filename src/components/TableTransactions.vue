@@ -64,7 +64,7 @@ onMounted(async () => {
 </script>
 <template>
     <h3>Transações</h3>
-    <el-table id="table-transactions" :data="transactions" style="width: 100%" :stripe="true">
+    <el-table id="table-transactions" :data="transactions" style="width: 100%" >
     <el-table-column prop="description" label="Description"></el-table-column>
     <el-table-column prop="amount" label="Amount"></el-table-column>
     <el-table-column prop="title" label="Title"></el-table-column>
