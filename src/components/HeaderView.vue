@@ -1,8 +1,9 @@
 <script lang='ts' setup>
-import { ref } from 'vue';
+import { usePeriod } from '../composables/period';
+
+const { selectedMonth } = usePeriod();
 
 const props = defineProps(['title']);
-const filter = ref({} as any);
 
 const handleRefresh = () => {
   console.log('refresh');
@@ -24,7 +25,7 @@ const handleGoProfile = () => {
         <h2 class="title">{{ props.title }}</h2>
       </el-col>
       <el-col :lg="6" :md="5" :sm="5" :xs="24">
-        <el-date-picker v-model="filter" format="DD/MM/YYYY" type="day" placeholder="Data" style="width: 100%;"/>
+        <el-date-picker v-model="selectedMonth" format="MM/YYYY" type="month" placeholder="Data" style="width: 100%;"/>
       </el-col>
       <el-col :lg="4" :md="5" :sm="7" :xs="24">
         <el-row class="icon_container"> 
