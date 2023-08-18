@@ -1,4 +1,4 @@
-from abract_extractor import ExtractorAbstract
+from data.abract_extractor import ExtractorAbstract
 from pynubank import Nubank
 import requests
 

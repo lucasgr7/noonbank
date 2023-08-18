@@ -4,17 +4,20 @@ import { Transaction, useCreditCardTransactions } from "./useCreditCardTransacti
 import { checkType, checkTypeValue, normalizeDate } from "../helper";
 
 export interface TypeMergeData {
-  type: string;
+  signal: string;
   typeValue: 'minus' | 'plus';
   description: string;
   amount: number | string;
   category: string;
   time: Date;
+  type: 'credit' | 'account';
+  id: string;
+  categoryId?: number;
 }
 
 export function useMergeTransaction(dates: Ref<string[]>){
-  const { transactions, totalTransactions } = useCreditCardTransactions(dates);
-  const { accTransactions, totalAccTransactions } = useAcountTransactions(dates);
+  const { transactions, totalTransactions, updateCreditCardCategory } = useCreditCardTransactions(dates);
+  const { accTransactions, totalAccTransactions, updateAccountCategory } = useAcountTransactions(dates);
 
   const mergeData = computed(() => {
 
@@ -29,23 +32,29 @@ export function useMergeTransaction(dates: Ref<string[]>){
   }
     const acc = accTransactions.value.map((x: AccountTransaction) => {
       return {
-        type: checkType(x.title),
+        signal: checkType(x.title),
         typeValue: checkTypeValue(x.title),
         description:  x.title + ' ' + x.detail,
         amount: convertToNumber(x.amount),
         category: x.kind,
-        time: normalizeDate(x.postdate) // assuming this is in the '2023-08-01' format
+        time: normalizeDate(x.postdate), // assuming this is in the '2023-08-01' format
+        type: 'account',
+        id: x.id,
+        categoryId: x.category_id
       }
     });
     const credit = transactions.value.map((x: Transaction) => {
       return {
         // type: emoji red
-        type: '🔴',
+        signal: '🔴',
         typeValue: 'minus',
         description: x.title + ' ' + x.description,
         amount: convertToNumber(x.amount),
         category: x.category,
-        time: normalizeDate(x.time) // assuming this can be in the '13/08/2023, 00:56:35' format
+        time: normalizeDate(x.time), // assuming this can be in the '13/08/2023, 00:56:35' format
+        type: 'credit',
+        id: x.id,
+        categoryId: x.category_id
       }
     });
 
@@ -60,5 +69,5 @@ export function useMergeTransaction(dates: Ref<string[]>){
     });
     return merged as TypeMergeData[];
   });
-  return {mergeData, totalTransactions, totalAccTransactions, accTransactions, transactions}
+  return {mergeData, totalTransactions, totalAccTransactions, accTransactions, transactions, updateAccountCategory, updateCreditCardCategory}
 }

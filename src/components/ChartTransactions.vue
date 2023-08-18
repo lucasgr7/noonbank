@@ -10,7 +10,8 @@ import {
 } from 'echarts/components';
 import VChart, { THEME_KEY } from 'vue-echarts';
 import { ref, provide, computed, watch } from 'vue';
-import { TypeMergeData, useMergeTransaction } from '../composables/useMergeTransaction';
+import { useMergeTransaction } from '../composables/useMergeTransaction';
+import Noonlabel from './Noonlabel.vue';
 
 use([
   CanvasRenderer,
@@ -31,9 +32,15 @@ const valueDate = computed(() => {
 })
 const { mergeData } = useMergeTransaction(valueDate);
 const options = ref();
+const totalGain = ref(0);
+const totalCost = ref(0);
 
 watch(() => mergeData.value, () => {
   if (mergeData.value?.length === 0) return;
+
+  // reset variables
+  totalGain.value = 0;
+  totalCost.value = 0;
 
   const startDate = dateRange.value[0];
   const endDate = dateRange.value[1];
@@ -99,9 +106,11 @@ watch(() => mergeData.value, () => {
 
   positiveData.map((item, index) => {
     positiveData[index] = parseFloat(item.toFixed(2));
+    totalGain.value += parseFloat(item);
   })
   negativeData.map((item, index) => {
     negativeData[index] = parseFloat(item.toFixed(2));
+    totalCost.value += parseFloat(item);
   })
 
 
@@ -180,6 +189,19 @@ console.log(mergeData)
       </el-row>
     </el-header>
     <v-chart class="chart" :option="options" autoresize />
+    <hr/>
+    <el-row align="middle">
+      <el-col :span="12">
+        <el-row justify="center">
+          <noonlabel label="Total Ganhos" :value="`R$ ${totalGain.toLocaleString('pt-BR')}`" />
+        </el-row>
+      </el-col>
+      <el-col :span="12">
+        <el-row justify="center">
+          <noonlabel label="Total Gastos" :value="` R$ ${totalCost.toLocaleString('pt-BR')}`" />
+        </el-row>
+      </el-col>
+    </el-row>
   </el-card>
 </template>
 <style lang="scss" scoped>

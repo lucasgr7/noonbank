@@ -1,5 +1,6 @@
 import { supabase } from "./supabase";
 import { ref, watch } from "vue";
+import { TypeMergeData } from "./useMergeTransaction";
 
 export interface Transaction {
   detailsStatus: string | null; // VARCHAR(255)
@@ -17,6 +18,7 @@ export interface Transaction {
   time: string | null; // Timestamp without time zone
   detailsChargesAmount: number | null; // NUMERIC(10, 5)
   detailsFxAmountUsd: boolean | null;
+  category_id: number | null;
 }
 
 
@@ -48,6 +50,13 @@ export const useCreditCardTransactions = (dates: Ref<string[]>) => {
     totalTransactions.value = count || 0;
   };
 
+  async function updateCreditCardCategory(data: TypeMergeData){
+    return await supabase
+      .from("transactions")
+      .update({ category_id: data.categoryId })
+      .eq("id", data.id);
+  }
+
   watch(() => dates.value, async (newDate) => {
       const table = "transactions";
       const { data } = await supabase
@@ -64,5 +73,5 @@ export const useCreditCardTransactions = (dates: Ref<string[]>) => {
     { immediate: true, deep: true }
   );
   
-  return { transactions, totalTransactions}
+  return { transactions, totalTransactions, updateCreditCardCategory}
 };

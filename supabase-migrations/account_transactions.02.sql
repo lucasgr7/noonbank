@@ -10,3 +10,5 @@ CREATE TABLE account_transactions (
     detail VARCHAR(255),
     amount DECIMAL(10, 2)
 );
+CREATE INDEX idx_account_transaction_postdate ON account_transactions (postdate);
+CREATE INDEX idx_transactions_time ON transactions (time);

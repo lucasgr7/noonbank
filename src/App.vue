@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import CategoryTag from './components/CategoryTag.vue';
+import ChartCategory from './components/ChartCategory.vue';
 import ChartTransactions from './components/ChartTransactions.vue';
 import HeaderView from './components/HeaderView.vue'
 import TableTransactions from './components/TableTransactions.vue';
-import { usePeriod } from './composables/period';
 
 </script>
 
@@ -11,13 +12,16 @@ import { usePeriod } from './composables/period';
     <HeaderView :title="'Relatório de Gastos'"/>
     <hr/>
     <el-main>
-      <el-row>
+      <el-row :gutter="40">
         <el-col :span="14">
           <ChartTransactions />
         </el-col>
+        <el-col :span="10">
+          <ChartCategory />
+        </el-col>
       </el-row>
       <el-row>
-        <el-col :span="14">
+        <el-col :span="24">
           <TableTransactions />
         </el-col>
       </el-row>

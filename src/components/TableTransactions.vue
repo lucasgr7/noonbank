@@ -2,11 +2,15 @@
 
 import { computed, onMounted, ref } from 'vue';
 import { usePeriod } from '../composables/period';
-import { useMergeTransaction } from '../composables/useMergeTransaction';
+import { TypeMergeData, useMergeTransaction } from '../composables/useMergeTransaction';
 import { moneyFormatter, timeFormatter } from '../helper';
+import { useCategories } from '../composables/useCategories';
+import { ElNotification } from 'element-plus';
+import CategoryTag from './CategoryTag.vue';
 
 const { dates } = usePeriod();
-const { mergeData, accTransactions, totalAccTransactions, totalTransactions } = useMergeTransaction(dates);
+const { mergeData, accTransactions, totalAccTransactions, totalTransactions, updateAccountCategory, updateCreditCardCategory } = useMergeTransaction(dates);
+const { getCategories, categories } = useCategories();
 
 const pageSize = ref(10);
 const currentPage = ref(1);
@@ -23,13 +27,13 @@ function handleSizeChange(newSize: number) {
 function handleCurrentChange(newPage: number) {
   currentPage.value = newPage;
 }
-function columnSort({prop, order}: any) {
+function columnSort({ prop, order }: any) {
   sortingColumn.value = { prop, order };
 }
 
 const chunckedData = computed(() => {
   const { order, prop } = sortingColumn.value;
-  
+
   // Sort the data based on the specified column and order
   let sortedData = mergeData.value;
   if (prop && order) {
@@ -49,20 +53,67 @@ const chunckedData = computed(() => {
   return sortedData.slice(start, end);
 });
 
+function computedCss(form: any) {
+  return {
+    color: form.color_font,
+    backgroundColor: form.background_color,
+    border: `1px solid ${form.color_font}`,
+    fontSize: '14px'
+  }
+}
 
+function handleChangePrimaryCateogry(row: TypeMergeData) {
+  // validate primaryCategory with notification
+  if (!row.categoryId) {
+    ElNotification({
+      title: 'Error',
+      message: 'Please select a category',
+      type: 'error'
+    });
+  }
+  try{
+    if (row.type === 'credit') {
+      updateCreditCardCategory(row);
+    } else {
+      updateAccountCategory(row);
+    }
+  }
+  catch(error: any){
+    ElNotification({
+      title: 'Error',
+      message: error.message,
+      type: 'error'
+    });
+  }
+}
 
 onMounted(() => {
   console.log(accTransactions.value, totalAccTransactions.value);
+  getCategories();
 })
 
 </script>
 <template>
   <h3>Transações</h3>
   <el-table id="table-transactions" @sort-change="columnSort" :data="chunckedData" style="width: 100%">
-    <el-table-column sortable prop="type" label="Tipo" :width="50"></el-table-column>
+    <el-table-column sortable prop="signal" label="Tipo" :width="50"></el-table-column>
     <el-table-column sortable prop="description" label="Description" :width="400"></el-table-column>
     <el-table-column sortable prop="amount" :formatter="moneyFormatter" label="Amount"></el-table-column>
-    <el-table-column sortable prop="cateogry" label="Category"></el-table-column>
+    <el-table-column sortable prop="categoryId" label="Category">
+      <template #default="scope">
+        <el-select v-if="!scope.row.categoryId && scope.row.typeValue !== 'plus'" placeholder="Select Category"
+          v-model="scope.row.categoryId" @change="handleChangePrimaryCateogry(scope.row)">
+          <el-option v-for="category in categories" :key="category.id" :label="category.name" :value="category.id">
+            <el-tag :style="computedCss(category)" class="tag">
+              {{ category.name }}
+            </el-tag>
+          </el-option>
+        </el-select>
+        <span v-else>
+          <CategoryTag v-if="scope.row.categoryId && (categories?.length ?? 0) > 0" :categories="categories" :id="scope.row.categoryId" />
+        </span>
+      </template>
+    </el-table-column>
     <el-table-column sortable prop="time" label="Time" :formatter="timeFormatter"></el-table-column>
   </el-table>
   <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"

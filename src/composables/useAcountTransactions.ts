@@ -1,5 +1,6 @@
 import { Ref, ref, watch } from "vue";
 import { supabase } from "./supabase";
+import { TypeMergeData } from "./useMergeTransaction";
 
 export interface AccountTransaction {
   id: string; // UUID
@@ -12,6 +13,7 @@ export interface AccountTransaction {
   postdate: string | null; // Date in appropriate format
   detail: string | null; // VARCHAR(255)
   amount: number | null; // NUMERIC(10, 2)
+  category_id: number | null;
 }
 
 
@@ -20,11 +22,7 @@ export const useAcountTransactions = (dates: Ref<string[]>, filter: any = null) 
   const totalAccTransactions = ref(0);
 
   const transform = (data: any) => {
-    return data.map((item: any) => {
-      return {
-        ...item
-      } as AccountTransaction
-    });
+    return data
   };
 
   const fetchTotalCount = async () => {
@@ -37,12 +35,21 @@ export const useAcountTransactions = (dates: Ref<string[]>, filter: any = null) 
       .select("*", { count: "exact" })
       .neq("title", "Dinheiro resgatado")
       .neq("title", "Dinheiro guardado")
+      .neq("title", "Pagamento da fatura")
       .not("detail", "ilike", "AVENUE SECURITIES DTVM LTDA%")
       .not("detail", "ilike", "Lucas Garcia%")
       .gt("postdate", dates.value[0])
       .lte("postdate", dates.value[1]);
     totalAccTransactions.value = count || 0;
   };
+
+  async function updateAccountCategory(data: TypeMergeData){
+    const table = "account_transactions";
+    return await supabase
+      .from(table)
+      .update({ category_id: data.categoryId })
+      .match({ id: data.id });
+  }
 
   watch(() => dates.value, async (newDate) => {
       const table = "account_transactions";
@@ -53,6 +60,7 @@ export const useAcountTransactions = (dates: Ref<string[]>, filter: any = null) 
         .lte("postdate", newDate[1])
         .neq("title", "Dinheiro resgatado")
         .neq("title", "Dinheiro guardado")
+        .neq("title", "Pagamento da fatura")
         // don't include any detail with the words AVENUE SECURITIES DTVM LTDA 
         .not("detail", "ilike", "AVENUE SECURITIES DTVM LTDA%")
         .not("detail", "ilike", "Lucas Garcia%")
@@ -65,5 +73,5 @@ export const useAcountTransactions = (dates: Ref<string[]>, filter: any = null) 
     { immediate: true, deep: true }
   );
   
-  return { accTransactions, totalAccTransactions}
+  return { accTransactions, totalAccTransactions, updateAccountCategory}
 }
