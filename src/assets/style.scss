@@ -1,6 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Abel&display=swap");
 
 :root {
+  #app{
+    // align content in the middle
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
   html{
     height: 100%;
   }
@@ -14,5 +21,8 @@
   .tag{
     // uppercase
     text-transform: uppercase;
+    cursor: pointer;
   }
+
+  --el-color-primary: #159c6d !important;
 }

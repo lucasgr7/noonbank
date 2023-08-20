@@ -11,7 +11,7 @@ class Categorizer:
 
     # Queries to select data
     QUERY_ACCOUNT = "id, title, detail, amount"
-    QUERY_TRANSACTION = "id, description, amount"
+    QUERY_TRANSACTION = "id, title, description, amount"
 
     def __init__(self, url, key):
         MODEL_PATH = 'ml/random_forest_model.joblib'
@@ -36,9 +36,7 @@ class Categorizer:
         # Get data from Supabase
         response = self.supabase.table(table_name).select(query)\
             .filter('category_id', 'is', 'null')\
-            .filter('title', 'neq', 'Dinheiro resgatado')\
-            .filter('title', 'neq', 'Dinheiro guardado')\
-            .filter('title', 'neq', 'Pagamento da fatura')\
+            .limit(100)\
             .execute()
         # check the number of rows
         if(len(response.data) == 0):
@@ -48,11 +46,11 @@ class Categorizer:
         data = response.data
 
         # filter off the rows that title contains 'Dinheiro resgatado', 'Dinheiro guardado', 'Pagamento da fatura'
-        data = [item for item in data if \
+        data = [item for item in data if 'title' in item and \
                 'Dinheiro resgatado' not in item['title']\
                       and 'Dinheiro guardado' not in item['title']\
                           and 'Pagamento da fatura' not in item['title'] and\
-                              'Transferência recebida'not in item['title']]
+                              'Transferência recebida' not in item['title']]
 
         if(len(data) == 0):
             print('No new rows to update')

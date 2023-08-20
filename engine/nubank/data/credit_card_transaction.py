@@ -18,9 +18,18 @@ class CreditCardTransaction(ExtractorAbstract):
 
     def extract(self):
       transactions = self.nu.get_card_statements()
+      limit = 10
       for raw_transaction in transactions:
-        transaction = self.transform(raw_transaction)
-        self.send(transaction)
+        try:
+          print('\033[94m' + f"Extracting transaction {raw_transaction['id']}" + '\033[0m')
+          transaction = self.transform(raw_transaction)
+          self.send(transaction)
+        except Exception as e:
+          print('\033[91m' + f"Failed to extract transaction {raw_transaction['id']}: {e}" + '\033[0m')
+          limit -= 1
+          if limit == 0:
+            break
+        # blue
       
 
     def transform(self, transaction):
@@ -62,8 +71,5 @@ class CreditCardTransaction(ExtractorAbstract):
           print(f"Failed to insert transaction {transaction['id']}: {response}")
     
     def execute(self):
-      try: 
-        self.nu.authenticate_with_cert(self.cpf, self.password, './cert.p12')
-        self.extract()
-      except Exception as e:
-         pass
+      self.nu.authenticate_with_cert(self.cpf, self.password, './cert.p12')
+      self.extract()

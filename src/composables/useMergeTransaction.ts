@@ -12,7 +12,7 @@ export interface TypeMergeData {
   time: Date;
   type: 'credit' | 'account';
   id: string;
-  categoryId?: number;
+  categoryId?: number | null;
 }
 
 export function useMergeTransaction(dates: Ref<string[]>){

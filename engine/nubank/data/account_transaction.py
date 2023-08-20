@@ -25,18 +25,25 @@ class AccountTransaction(ExtractorAbstract):
       current_page_number = 1
       cursor = None
       limit = 0
+      limitTries = 10
       while has_next_page and limit < self.limitIterations:
-          feed = self.nu.get_account_statements_paginated(cursor)
+          try:
+            feed = self.nu.get_account_statements_paginated(cursor)
 
-          # Flattening the feed['edges'] and append to storage
-          flat_edges = [self.transform(row) for row in feed['edges']]
+            # Flattening the feed['edges'] and append to storage
+            flat_edges = [self.transform(row) for row in feed['edges']]
 
-          has_next_page = feed['pageInfo']['hasNextPage']
-          cursor = feed['edges'][-1]['cursor']
-          current_page_number += 1
-          limit += 1
-          print('extracting account transactions it: ', limit)
-          self.send(flat_edges)
+            has_next_page = feed['pageInfo']['hasNextPage']
+            cursor = feed['edges'][-1]['cursor']
+            current_page_number += 1
+            limit += 1
+            print('extracting account transactions it: ', limit)
+            self.send(flat_edges)
+          except Exception as e:
+            print('\033[91m' + f"Failed to extract transaction {e}" + '\033[0m')
+            limitTries -= 1
+            if limitTries == 0:
+              break
 
     def transform(self, data):
       node = data['node']
@@ -71,8 +78,5 @@ class AccountTransaction(ExtractorAbstract):
             print(f"Failed to insert transaction {row['id']}: {response}")
 
     def execute(self):
-        try:
-          self.nu.authenticate_with_cert(self.cpf, self.password, './cert.p12')
-          self.extract()
-        except Exception as e:
-           pass
+        self.nu.authenticate_with_cert(self.cpf, self.password, './cert.p12')
+        self.extract()

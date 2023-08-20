@@ -119,7 +119,7 @@ console.log(mergeData)
 }
 
 .chart {
-  height: 40vh;
+  height: 45vh;
   width: 100% auto;
 }
 </style>

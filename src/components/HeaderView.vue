@@ -5,23 +5,32 @@ import {
 } from '@element-plus/icons-vue'
 import FormCreateTag from './FormCreateTag.vue';
 import { ref } from 'vue';
+import FormCreateStock from './FormCreateStock.vue';
 
 const { selectedMonth } = usePeriod();
 const isFormCreateTag = ref(false);
+const isFormCreateStock = ref(false);
 
 const props = defineProps(['title']);
 
+function showCreateStock() {
+  isFormCreateStock.value = true;
+}
 function showCreateCategory() {
   isFormCreateTag.value = true;
 }
 function closeCategory() {
   isFormCreateTag.value = false;
 }
+function closeStock() {
+  isFormCreateStock.value = false;
+}
 
 </script>
 
 <template>
   <FormCreateTag :visible="isFormCreateTag" @close="closeCategory" />
+  <FormCreateStock :visible="isFormCreateStock" @close="closeStock" />
     <el-row class="container" align="middle">
       <el-col :lg="8" :md="8" :sm="6" :xs="24">
         <h2 class="title">{{ props.title }}</h2>
@@ -37,7 +46,7 @@ function closeCategory() {
             </el-button>
           </el-col>
           <el-col :span="6">
-            <el-button :icon="Plus" type="warning" round>
+            <el-button :icon="Plus" type="warning" @click="showCreateStock" round>
               Novo Ativo
             </el-button>
           </el-col>

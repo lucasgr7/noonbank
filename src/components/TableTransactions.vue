@@ -87,6 +87,10 @@ function handleChangePrimaryCateogry(row: TypeMergeData) {
   }
 }
 
+function handleClearCategory(row: TypeMergeData){
+  row.categoryId = null;
+}
+
 onMounted(() => {
   console.log(accTransactions.value, totalAccTransactions.value);
   getCategories();
@@ -97,9 +101,9 @@ onMounted(() => {
   <h3>Transações</h3>
   <el-table id="table-transactions" @sort-change="columnSort" :data="chunckedData" style="width: 100%">
     <el-table-column sortable prop="signal" label="Tipo" :width="50"></el-table-column>
-    <el-table-column sortable prop="description" label="Description" :width="400"></el-table-column>
-    <el-table-column sortable prop="amount" :formatter="moneyFormatter" label="Amount"></el-table-column>
-    <el-table-column sortable prop="categoryId" label="Category">
+    <el-table-column sortable prop="description" label="Description" :width="300"></el-table-column>
+    <el-table-column sortable prop="amount" :formatter="moneyFormatter" :width="100" label="Amount"></el-table-column>
+    <el-table-column sortable prop="categoryId" label="Category" :width="130">
       <template #default="scope">
         <el-select v-if="!scope.row.categoryId && scope.row.typeValue !== 'plus'" placeholder="Select Category"
           v-model="scope.row.categoryId" @change="handleChangePrimaryCateogry(scope.row)">
@@ -110,7 +114,7 @@ onMounted(() => {
           </el-option>
         </el-select>
         <span v-else>
-          <CategoryTag v-if="scope.row.categoryId && (categories?.length ?? 0) > 0" :categories="categories" :id="scope.row.categoryId" />
+          <CategoryTag v-if="scope.row.categoryId && (categories?.length ?? 0) > 0" :categories="categories" @click="handleClearCategory(scope.row)" :id="scope.row.categoryId" />
         </span>
       </template>
     </el-table-column>

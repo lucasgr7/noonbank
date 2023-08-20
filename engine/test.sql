@@ -1,0 +1,1 @@
+CREATE TABLE test (id integer SERIAL PRIMARY KEY, name varchar NULL);
