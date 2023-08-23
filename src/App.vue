@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ChartCategory from './components/ChartCategory.vue';
+import ChartInvestments from './components/ChartInvestments.vue';
 import ChartTransactions from './components/ChartTransactions.vue';
 import HeaderView from './components/HeaderView.vue'
 import ReccurentDebts from './components/ReccurentDebts.vue';
@@ -27,14 +28,17 @@ import TableTransactions from './components/TableTransactions.vue';
               <ChartCategory />
             </el-col>
           </el-row>
-          <el-row>
+          <el-row :gutter="10">
             <el-col :span="14">
               <TableTransactions />
+            </el-col>
+            <el-col :span="10">
+              <ChartInvestments />
             </el-col>
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="Investimentos">
-          <el-row>
+          <el-row :gutter="10">
             <el-col :span="24">
               <TableStocks />
             </el-col>

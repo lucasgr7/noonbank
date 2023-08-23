@@ -43,8 +43,6 @@ watch(() => mergeData.value, () => {
     if (!categoryId) return acc;
 
     if (!acc[categoryId]) {
-      console.log('new cateogry id', categoryId)
-      console.log(acc)
       const categoryName: string = categories.value.find((category: Category) => category.id === categoryId)?.name;
       acc[categoryId] = {
         name: categoryName.toUpperCase(),
@@ -95,10 +93,6 @@ watch(() => mergeData.value, () => {
     ],
   }
 })
-
-// data
-
-console.log(mergeData)
 
 </script>
 <template>

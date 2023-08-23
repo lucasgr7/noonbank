@@ -1,57 +1,31 @@
-import { supabase } from './supabase';
-import { ref } from 'vue';
+import { useTable } from './useTable';
 
 export interface Stock {
   id: number;
   symbol: string;
   quantity: number;
-  type: string;
+  investment_type: 'brazilian_stock' | 'us_stock' | 'brazilian_treasury_bond' | 'liquid_investment';
 }
 
-const stocks = ref();
+const columns = {
+  "id": {
+    "type": "integer",
+    "nullable": false
+  },
+  "symbol": {
+    "type": "varchar",
+    "nullable": false
+  },
+  "quantity": {
+    "type": "integer",
+    "nullable": false
+  },
+  "investment_type": {
+    "type": "varchar",
+    "nullable": false
+  }
+}
 
 export function useStock(){
-  const error = ref();
-
-  async function insertStock(form: Stock){
-    if(!form.symbol || !form.quantity || !form.type){
-      error.value = 'Invalid input';
-      return;
-    }
-    try{
-      const {data, error} = await supabase
-        .from('stocks')
-        .insert([
-          {
-            symbol: form.symbol,
-            quantity: Number(form.quantity),
-            investment_type: form.type,
-          },
-        ]).select();
-      console.log('data', data)
-      if(error) throw error;
-      await getStocks();
-    }
-    catch(err){
-      error.value = err;
-    }
-  }
-
-  async function getStocks(){
-    try{
-      const {data, error} = await supabase.from('stocks').select();
-      if(error) throw error;
-      stocks.value = data;
-    }
-    catch(err){
-      error.value = err;
-    }
-  }
-
-  return {
-    stocks,
-    error,
-    insertStock,
-    getStocks,
-  }
+  return useTable<Stock>('stocks', columns);
 }

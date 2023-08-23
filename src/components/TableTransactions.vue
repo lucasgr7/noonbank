@@ -92,7 +92,6 @@ function handleClearCategory(row: TypeMergeData){
 }
 
 onMounted(() => {
-  console.log(accTransactions.value, totalAccTransactions.value);
   getCategories();
 })
 

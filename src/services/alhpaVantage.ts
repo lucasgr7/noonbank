@@ -1,7 +1,7 @@
 
 interface APIResponse {
-  "Meta_Data": MetaData;
-  "Monthly_Time_Series": Record<string, DailyTimeSeries>;
+  "Meta Data": MetaData;
+  "Monthly Time Series": Record<string, DailyTimeSeries>;
 }
 
 interface MetaData {
@@ -24,7 +24,7 @@ interface DailyTimeSeries {
 export async function getStockSum(symbol: string): Promise<APIResponse | null> {
   try {
     const apiKey = import.meta.env.VITE_APP_ALPHA_KEY;
-    const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=5min&apikey=${apiKey}`;
+    const url = `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${apiKey}`;
     const response = await fetch(url);
     const data = await response.json();
     return data as APIResponse;
