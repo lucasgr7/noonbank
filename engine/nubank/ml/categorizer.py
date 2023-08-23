@@ -32,11 +32,11 @@ class Categorizer:
         self.scaler = load(SCALER_PATH)
 
     # Function to predict and update category_id
-    def predict_and_update(self, query, table_name):
+    def predict_and_update(self, query, table_name, column_name_sort):
         # Get data from Supabase
         response = self.supabase.table(table_name).select(query)\
             .filter('category_id', 'is', 'null')\
-            .limit(100)\
+            .order(column_name_sort)\
             .execute()
         # check the number of rows
         if(len(response.data) == 0):

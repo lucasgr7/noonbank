@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+  <script lang="ts" setup>
 
 import { computed, onMounted, ref } from 'vue';
 import { usePeriod } from '../composables/period';
@@ -9,7 +9,7 @@ import { ElNotification } from 'element-plus';
 import CategoryTag from './CategoryTag.vue';
 
 const { dates } = usePeriod();
-const { mergeData, accTransactions, totalAccTransactions, totalTransactions, updateAccountCategory, updateCreditCardCategory } = useMergeTransaction(dates);
+const { mergeData, totalAccTransactions, totalTransactions, updateAccountCategory, updateCreditCardCategory } = useMergeTransaction(dates);
 const { getCategories, categories } = useCategories();
 
 const pageSize = ref(10);

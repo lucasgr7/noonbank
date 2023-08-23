@@ -18,10 +18,9 @@ class CreditCardTransaction(ExtractorAbstract):
 
     def extract(self):
       transactions = self.nu.get_card_statements()
-      limit = 10
+      limit = 5
       for raw_transaction in transactions:
         try:
-          print('\033[94m' + f"Extracting transaction {raw_transaction['id']}" + '\033[0m')
           transaction = self.transform(raw_transaction)
           self.send(transaction)
         except Exception as e:
@@ -64,6 +63,7 @@ class CreditCardTransaction(ExtractorAbstract):
       # Check for success
       if response.status_code == 201:
           print(f"Inserted transaction {transaction['id']}")
+          print('\033[94m' + f"sending transaction {transaction['id']}" + '\033[0m')
       elif response.status_code == 409:  # Conflict (duplicate)
           print(f"Stoped at duplicate transaction {transaction['id']}")
           raise Exception('Stoped at duplicate transaction')

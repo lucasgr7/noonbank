@@ -20,13 +20,30 @@ interface DailyTimeSeries {
   "5__volume": string;
 }
 
-
 export async function getStockSum(symbol: string): Promise<APIResponse | null> {
   try {
+    // Define cache key
+    const cacheKey = `stock_${symbol}`;
+    const cachedData = localStorage.getItem(cacheKey);
+
+    // If cached data exists and is not older than 20 days, return it
+    if (cachedData) {
+      const { data, timestamp } = JSON.parse(cachedData);
+      if (Date.now() - timestamp < 20 * 24 * 60 * 60 * 1000) {
+        return data as APIResponse;
+      }
+    }
+
     const apiKey = import.meta.env.VITE_APP_ALPHA_KEY;
     const url = `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${apiKey}`;
     const response = await fetch(url);
     const data = await response.json();
+    if(data['Information']){
+      throw new Error(data['Information']);
+    }
+    // Cache the result for 20 days
+    localStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: Date.now() }));
+
     return data as APIResponse;
   } catch (error) {
     console.error(error);

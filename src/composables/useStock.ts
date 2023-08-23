@@ -10,7 +10,7 @@ export interface Stock {
 const columns = {
   "id": {
     "type": "integer",
-    "nullable": false
+    "nullable": true
   },
   "symbol": {
     "type": "varchar",

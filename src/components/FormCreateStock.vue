@@ -3,7 +3,7 @@ import { reactive, ref, watch } from 'vue';
 import { Stock, useStock } from '../composables/useStock';
 import { ElNotification } from 'element-plus';
 
-const { insertStock, error } = useStock();
+const { insertRecord, error } = useStock();
 
 const props = defineProps({
   visible: {
@@ -32,11 +32,11 @@ watch(() => error.value, (value) => {
 const form = reactive({
   symbol: '',
   quantity: 0,
-  type: '',
+  investment_type: 'brazilian_stock',
 } as Stock)
 
 function handleSave(){
-  insertStock(form);
+  insertRecord(form);
   emits('close');
 }
 
@@ -74,7 +74,7 @@ function handleSave(){
         </label>
       </el-col>
       <el-col>
-        <el-select v-model="form.type" placeholder="Tipo">
+        <el-select v-model="form.investment_type" placeholder="Tipo">
           <el-option label="Ação Brasileira" value="brazilian_stock"></el-option>
           <el-option label="Ação Americana" value="us_stock"></el-option>
           <el-option label="Tesouro Direto" value="brazilian_treasury_bond" ></el-option>

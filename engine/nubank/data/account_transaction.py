@@ -25,7 +25,7 @@ class AccountTransaction(ExtractorAbstract):
       current_page_number = 1
       cursor = None
       limit = 0
-      limitTries = 10
+      limitTries = 5
       while has_next_page and limit < self.limitIterations:
           try:
             feed = self.nu.get_account_statements_paginated(cursor)
@@ -37,7 +37,6 @@ class AccountTransaction(ExtractorAbstract):
             cursor = feed['edges'][-1]['cursor']
             current_page_number += 1
             limit += 1
-            print('extracting account transactions it: ', limit)
             self.send(flat_edges)
           except Exception as e:
             print('\033[91m' + f"Failed to extract transaction {e}" + '\033[0m')
@@ -70,7 +69,7 @@ class AccountTransaction(ExtractorAbstract):
       for row in data:
         response = requests.post(self.url, json=row, headers=headers)
         if response.status_code == 201:
-            print(f"Inserted transaction {row['id']}")
+            print('\033[94m' + f"sending transaction {row['id']}" + '\033[0m')
         elif response.status_code == 409:  # Conflict (duplicate)
             print(f"stoped duplicate transaction {row['id']}")
             raise Exception('stoped duplicate transaction')
