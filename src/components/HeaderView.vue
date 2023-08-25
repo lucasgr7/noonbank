@@ -59,6 +59,7 @@ function closeStock() {
 .container {
   width: 100%;
   padding: 0px 20px;
+  height: 9vh;
 
   border-radius: 5px;
 }

@@ -14,6 +14,7 @@ class AccountTransaction(ExtractorAbstract):
     def __init__(self, url, apiKey, limitIterations, cpf, password) -> None:
       super().__init__()
       self.nu = Nubank()
+      import pdb; pdb.set_trace()
       self.url = url
       self.apiKey = apiKey
       self.limitIterations = limitIterations

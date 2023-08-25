@@ -15,7 +15,7 @@ export interface TypeMergeData {
   categoryId?: number | null;
 }
 
-export function useMergeTransaction(dates: Ref<string[]>){
+export function useMergeTransaction(dates: Ref<{startDate: Date, endDate: Date}>){
   const { transactions, totalTransactions, updateCreditCardCategory } = useCreditCardTransactions(dates);
   const { accTransactions, totalAccTransactions, updateAccountCategory } = useAcountTransactions(dates);
 

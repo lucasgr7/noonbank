@@ -9,9 +9,10 @@ import {
   GridComponent,
 } from 'echarts/components';
 import VChart, { THEME_KEY } from 'vue-echarts';
-import { ref, provide, computed, watch } from 'vue';
+import { ref, provide, watch } from 'vue';
 import { TypeMergeData, useMergeTransaction } from '../composables/useMergeTransaction';
 import { Category, useCategories } from '../composables/useCategories';
+import SliderDatePicker from './SliderDatePicker.vue';
 const { categories } = useCategories();
 
 use([
@@ -24,14 +25,8 @@ use([
 ]);
 provide(THEME_KEY, 'light');
 
-const dateRange = ref([new Date(2023, 0, 1), new Date(2023, 11, 31)]);
-const valueDate = computed(() => {
-  return [
-    dateRange.value[0].toISOString().slice(0, 10),
-    dateRange.value[1].toISOString().slice(0, 10),
-  ]
-})
-const { mergeData } = useMergeTransaction(valueDate);
+const dateRange = ref();
+const { mergeData } = useMergeTransaction(dateRange);
 const options = ref();
 
 watch(() => mergeData.value, () => {
@@ -75,12 +70,19 @@ watch(() => mergeData.value, () => {
       left: '3%',
       right: '4%',
       bottom: '3%',
+      background: null,
       containLabel: true
     },
     series: [
       {
         name: 'Categorias',
         type: 'pie',
+        radius: ['50%', '70%'],
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: '#f0efef',
+          borderWidth: 2
+        },
         emphasis: {
           itemStyle: {
             shadowBlur: 10,
@@ -92,19 +94,21 @@ watch(() => mergeData.value, () => {
       },
     ],
   }
-})
+});
+
+
+function handleDateChange(newDate: any) {
+  dateRange.value = newDate;
+}
 
 </script>
 <template>
-  <el-card>
+  <el-card style="border-radius: 50%; border-radius: 38px; height: 10vh; box-shadow: none;">
     <el-header>
-      <el-row justify="center">
-        <el-date-picker type="daterange" v-model="dateRange" range-separator="até" start-placeholder="Start date"
-          end-placeholder="End date" align="right" />
-      </el-row>
+      <slider-date-picker @date-range-changed="handleDateChange" />
     </el-header>
-    <v-chart class="chart" :option="options" autoresize />
   </el-card>
+    <v-chart class="chart" :option="options" autoresize />
 </template>
 <style lang="scss" scoped>
 .el-card {

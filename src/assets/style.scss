@@ -16,6 +16,9 @@
     background: linear-gradient(230deg, #a3f2e3 0%, #159c6d 100%);
     font-family: 'Abel', sans-serif;
     height: 100%;
+    #body{
+    min-width: 1124px !important;
+    }
   }
 
   .tag{

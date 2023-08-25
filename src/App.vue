@@ -3,7 +3,7 @@ import ChartCategory from './components/ChartCategory.vue';
 import ChartInvestments from './components/ChartInvestments.vue';
 import ChartTransactions from './components/ChartTransactions.vue';
 import HeaderView from './components/HeaderView.vue'
-import ReccurentDebts from './components/ReccurentDebts.vue';
+import ReccurentBills from './components/ReccurentBills.vue';
 import TableStocks from './components/TableStocks.vue';
 import TableTransactions from './components/TableTransactions.vue';
 
@@ -19,7 +19,7 @@ import TableTransactions from './components/TableTransactions.vue';
         <el-tab-pane label="Fluxo de caixa">
           <el-row :gutter="10">
             <el-col :span="5">
-              <ReccurentDebts />
+              <ReccurentBills />
             </el-col>
             <el-col :span="11">
               <ChartTransactions />
@@ -57,7 +57,7 @@ import TableTransactions from './components/TableTransactions.vue';
 .el-card{
   border-radius: 5px;
   background: rgba(244, 245, 240, 1);
-  background: linear-gradient(0deg, rgb(213, 214, 207) 0%, rgba(244, 245, 240, 1) 100%);
+  background: linear-gradient(0deg, #f0f0ef 0%, #f0efef 100%);
 }
 
 // set var --el-color-primary to greens

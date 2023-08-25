@@ -111,11 +111,11 @@ export class ChartOptionsBuilder {
     this.options.toolbox.feature = feature;
     return this;
   }
-  setGrid(left: string, right: string, bottom: string, containLabel: boolean){
+  setGrid(left: string, right: string, bottom: string){
     this.options.grid.left = left;
     this.options.grid.right = right;
     this.options.grid.bottom = bottom;
-    this.options.grid.containLabel = containLabel;
+    this.options.grid.containLabel = true;
     return this;
   }
   setYAxis(axis: YAxis[]){
@@ -133,6 +133,7 @@ export class ChartOptionsBuilder {
   build(){
     // log json version of options
     console.info(JSON.stringify(this.options));
+    console.info(this.options);
     return this.options;
   }
 
@@ -150,6 +151,12 @@ export class ChartOptionsBuilder {
             position: 'top',
           },
           areaStyle: {},
+          markPoint: {
+            data: [
+              { type: 'max', name: 'Max' },
+              { type: 'min', name: 'Min' }
+            ]
+          },
           emphasis: {
             focus: 'series',
           },
@@ -159,7 +166,7 @@ export class ChartOptionsBuilder {
         .setTooltip('axis', {type: 'cross', label: {backgroundColor: '#6a7985'}})
         .setLegend(legend)
         .setToolbox({saveAsImage: {}})
-        .setGrid('3%', '4%', '3%', false)
+        .setGrid('3%', '4%', '3%')
         .setXAxis(xAxis)
           .setYAxis([{
             type: 'value',

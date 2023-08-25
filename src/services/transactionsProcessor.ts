@@ -16,8 +16,7 @@ export const processor = (
       totalGain.value = 0;
       totalCost.value = 0;
 
-      const startDate = dateRange.value[0];
-      const endDate = dateRange.value[1];
+      const {startDate, endDate} = dateRange.value;
       const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
       const diffDays = Math.round(Math.abs((startDate - endDate) / oneDay)) + 1;
 

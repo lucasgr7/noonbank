@@ -50,3 +50,36 @@ export async function getStockSum(symbol: string): Promise<APIResponse | null> {
     return null;
   }
 }
+
+export async function getDolarCotation(){
+  try {
+    // define cache key
+    const cacheKey = 'dolar';
+    const cachedData = localStorage.getItem(cacheKey);
+
+    if (cachedData) {
+      const { data, timestamp } = JSON.parse(cachedData);
+      if (Date.now() - timestamp < 20 * 24 * 60 * 60 * 1000) {
+        return data as APIResponse;
+      }
+    }
+
+    const apiKey = import.meta.env.VITE_APP_ALPHA_KEY;
+    const url = `https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=USD&to_symbol=BRL&apikey=${apiKey}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    if(data['Information']){
+      throw new Error(data['Information']);
+    }
+    // get latest from data['Time Series FX (Daily)']
+    const latestKey = Object.keys(data['Time Series FX (Daily)'])[0];
+    const dolarValue = data['Time Series FX (Daily)'][latestKey]['4. close'] as any;
+    // Cache the result for 20 days
+    localStorage.setItem(cacheKey, JSON.stringify({ data: dolarValue, timestamp: Date.now() }));
+
+    return dolarValue as string;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}

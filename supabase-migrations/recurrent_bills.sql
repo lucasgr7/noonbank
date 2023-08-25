@@ -1,0 +1,1 @@
+CREATE TABLE recurrent_bills (id SERIAL PRIMARY KEY, label varchar NULL, key varchar);

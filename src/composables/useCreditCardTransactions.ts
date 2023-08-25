@@ -1,5 +1,5 @@
 import { supabase } from "./supabase";
-import { ref, watch } from "vue";
+import { Ref, ref, watch } from "vue";
 import { TypeMergeData } from "./useMergeTransaction";
 
 export interface Transaction {
@@ -22,7 +22,7 @@ export interface Transaction {
 }
 
 
-export const useCreditCardTransactions = (dates: Ref<string[]>) => {
+export const useCreditCardTransactions = (dates: Ref<{startDate: Date, endDate: Date}>) => {
   const transactions = ref([] as Transaction[]);
   const totalTransactions = ref(0);
 
@@ -45,8 +45,8 @@ export const useCreditCardTransactions = (dates: Ref<string[]>) => {
     const { count } = await supabase
       .from("transactions")
       .select("*", { count: "exact" })
-      .gte("time", dates.value[0])
-      .lte("time", dates.value[1]);
+      .gte("time", dates.value.startDate.toJSON())
+      .lte("time", dates.value.endDate.toJSON());
     totalTransactions.value = count || 0;
   };
 
@@ -58,17 +58,18 @@ export const useCreditCardTransactions = (dates: Ref<string[]>) => {
   }
 
   watch(() => dates.value, async (newDate) => {
-      const table = "transactions";
-      const { data } = await supabase
-        .from(table)
-        .select("*")
-        .gte("time", newDate[0])
-        .lte("time", newDate[1])
-        .order("time", { ascending: false });
-      transactions.value = transform(data);
-  
-      // Fetch total count if needed (only once or when data changes)
-      fetchTotalCount();
+    if(!newDate) return;
+    const table = "transactions";
+    const { data } = await supabase
+      .from(table)
+      .select("*")
+      .gte("time", newDate.startDate.toJSON())
+      .lte("time", newDate.endDate.toJSON())
+      .order("time", { ascending: false });
+    transactions.value = transform(data);
+
+    // Fetch total count if needed (only once or when data changes)
+    fetchTotalCount();
     },
     { immediate: true, deep: true }
   );

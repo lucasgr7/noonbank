@@ -1,6 +1,6 @@
 import { Ref, ref, watch } from "vue";
 import { Stock, useStock } from "./useStock";
-import { getStockSum } from "../services/alhpaVantage";
+import { getDolarCotation, getStockSum } from "../services/alhpaVantage";
 
 export interface Investment{
   name: string;
@@ -13,55 +13,39 @@ getRecords();
 
 export const useInvestments = (period: Ref<Date[]>) => {
   const investmentsSeries = ref([] as Investment[]);
-  watch(() => period.value, async (newDates: {startDate: Date, endDate: Date}) => {
-    if(records?.value === undefined) return;
-    investmentsSeries.value = [] as Investment[];
-    const calls = [];
+  const isStockUS = (symbol: string) => records.value?.some((stock: Stock) => stock.symbol === symbol && stock.investment_type === 'us_stock');
 
-    for(let i = 0; i < records?.value.length; i++) {
-      const stock = records?.value[i] as Stock;
-      let symbol = stock.symbol;
-      if(stock.investment_type === 'brazilian_stock'){
-        symbol += '.SAO';
-      }
-      calls.push(getStockSum(symbol));
-    }
-  
-    // wait all calls to finish
+  watch(() => period.value, async ({startDate, endDate}: {startDate: Date, endDate: Date}) => {
+    if (!records?.value) return;
+    investmentsSeries.value = [];
+    const dolarCottation = await getDolarCotation();
+    const calls = records.value.map(stock => getStockSum(stock.investment_type === 'brazilian_stock' ? `${stock.symbol}.SAO` : stock.symbol));
+    
     const responses = await Promise.all(calls);
 
-    for(let i = 0; i < responses.length; i++) {
-      const stock = responses[i];
-      if(!stock) continue;
+    responses.forEach((stock, i) => {
+      if (!stock) return;
       const symbol = records?.value[i].symbol;
-      const data = stock['Monthly Time Series'] as any;
+      const data = stock['Monthly Time Series'];
+      const baseMultiplier = isStockUS(symbol) ? Number(dolarCottation) : 1;
 
-      if(data == null || data.length === 0) continue;
-
-      // reverse data
-
-      // filter objects from data where is between newDates.startDate and endDate
-      for(let x = 0; x < Object.values(data).length; x++) {
-        const date = Object.keys(data)[x];
+      Object.entries(data).forEach(([date, value]) => {
         const dateObj = new Date(date);
-        if(dateObj >= newDates.startDate && dateObj <= newDates.endDate) {
+        if (dateObj >= startDate && dateObj <= endDate) {
           investmentsSeries.value.push({
             name: symbol,
-            date: date,
-            closeValue: Number((data[date]['4. close'] * records?.value[i].quantity).toFixed(2))
-          })
+            date,
+            closeValue: Number(((value['4. close'] * records?.value[i].quantity) * baseMultiplier).toFixed(2))
+          });
         }
-        // if is lower than startDate, exit the for
-        if(dateObj < newDates.startDate) {
-          break;
-        }
-      }
-    }
-    console.log('series ', investmentsSeries.value);
+        if (dateObj < startDate) return false;
+      });
+    });
 
-  })
+    console.log('series ', investmentsSeries.value);
+  });
 
   return {
     investmentsSeries
-  }
-}
+  };
+};

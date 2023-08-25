@@ -14,6 +14,7 @@ const { getCategories, categories } = useCategories();
 
 const pageSize = ref(10);
 const currentPage = ref(1);
+const search = ref('');
 // Sorting column reference
 const sortingColumn = ref({
   order: 'descending', // or 'descending'
@@ -33,6 +34,12 @@ function columnSort({ prop, order }: any) {
 
 const chunckedData = computed(() => {
   const { order, prop } = sortingColumn.value;
+  if(search.value){
+    const result = mergeData.value.filter((item) => {
+      return item.description.toLowerCase().includes(search.value.toLowerCase());
+    })
+    return result;
+  }
 
   // Sort the data based on the specified column and order
   let sortedData = mergeData.value;
@@ -97,7 +104,14 @@ onMounted(() => {
 
 </script>
 <template>
-  <h3>Transações</h3>
+  <el-row align="middle">
+    <el-col :span="4">
+      <h3>Transações</h3>
+    </el-col>
+    <el-col :span="18">
+      <el-input type="text" v-model="search" placeholder="Search" clearable></el-input>
+    </el-col>
+  </el-row>
   <el-table id="table-transactions" @sort-change="columnSort" :data="chunckedData" style="width: 100%">
     <el-table-column sortable prop="signal" label="Tipo" :width="50"></el-table-column>
     <el-table-column sortable prop="description" label="Description" :width="300"></el-table-column>
@@ -119,12 +133,12 @@ onMounted(() => {
     </el-table-column>
     <el-table-column sortable prop="time" label="Time" :formatter="timeFormatter"></el-table-column>
   </el-table>
-  <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
-    :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+  <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" class="paginator" :current-page="currentPage"
+    :page-sizes="[10, 20, 50, 100]" :page-size="pageSize"
     :total="totalTransactions + totalAccTransactions">
   </el-pagination>
 </template>
-<style lang="scss" scoped>
+<style lang="scss">
 #transactions-table {
   /* From https://css.glass */
   background: rgba(111, 224, 255, 0.61);
@@ -134,4 +148,28 @@ onMounted(() => {
   -webkit-backdrop-filter: blur(9.2px);
   border: 1px solid rgba(111, 224, 255, 0.37);
 }
+  .paginator{
+    margin-top: 8px;
+    button {
+        // round
+        border-radius: 50% !important;
+        // size
+        width: 30px;
+        height: 30px;
+        margin-right: 4px;
+    }
+    ul.el-pager{
+      height: 8vh;
+      li {
+        // round
+        border-radius: 50% !important;
+        // size
+        width: 30px;
+        height: 30px;
+        margin-right: 4px;
+        // dropshadow
+        box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
 </style>

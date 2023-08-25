@@ -17,7 +17,7 @@ export interface AccountTransaction {
 }
 
 
-export const useAcountTransactions = (dates: Ref<string[]>, filter: any = null) => {
+export const useAcountTransactions = (dates: Ref<{startDate: Date, endDate: Date}>, filter: any = null) => {
   const accTransactions = ref([] as AccountTransaction[]);
   const totalAccTransactions = ref(0);
 
@@ -38,8 +38,8 @@ export const useAcountTransactions = (dates: Ref<string[]>, filter: any = null) 
       .neq("title", "Pagamento da fatura")
       .not("detail", "ilike", "AVENUE SECURITIES DTVM LTDA%")
       .not("detail", "ilike", "Lucas Garcia%")
-      .gt("postdate", dates.value[0])
-      .lte("postdate", dates.value[1]);
+      .gte("postdate", dates.value.startDate.toJSON())
+      .lte("postdate", dates.value.endDate.toJSON());
     totalAccTransactions.value = count || 0;
   };
 
@@ -52,23 +52,24 @@ export const useAcountTransactions = (dates: Ref<string[]>, filter: any = null) 
   }
 
   watch(() => dates.value, async (newDate) => {
-      const table = "account_transactions";
-      const { data } = await supabase
-        .from(table)
-        .select("*")
-        .gt("postdate", newDate[0])
-        .lte("postdate", newDate[1])
-        .neq("title", "Dinheiro resgatado")
-        .neq("title", "Dinheiro guardado")
-        .neq("title", "Pagamento da fatura")
-        // don't include any detail with the words AVENUE SECURITIES DTVM LTDA 
-        .not("detail", "ilike", "AVENUE SECURITIES DTVM LTDA%")
-        .not("detail", "ilike", "Lucas Garcia%")
-        .order("postdate", { ascending: false });
-      accTransactions.value = transform(data);
-  
-      // Fetch total count if needed (only once or when data changes)
-      fetchTotalCount();
+    if(!newDate) return;
+    const table = "account_transactions";
+    const { data } = await supabase
+      .from(table)
+      .select("*")
+      .gte("postdate", newDate.startDate.toJSON())
+      .lte("postdate", newDate.endDate.toJSON())
+      .neq("title", "Dinheiro resgatado")
+      .neq("title", "Dinheiro guardado")
+      .neq("title", "Pagamento da fatura")
+      // don't include any detail with the words AVENUE SECURITIES DTVM LTDA 
+      .not("detail", "ilike", "AVENUE SECURITIES DTVM LTDA%")
+      .not("detail", "ilike", "Lucas Garcia%")
+      .order("postdate", { ascending: false });
+    accTransactions.value = transform(data);
+
+    // Fetch total count if needed (only once or when data changes)
+    fetchTotalCount();
     },
     { immediate: true, deep: true }
   );
