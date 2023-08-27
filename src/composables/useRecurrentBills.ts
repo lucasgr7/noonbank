@@ -1,4 +1,4 @@
-import { useTable } from "./useTable";
+import { useSupaTable } from "./useSupaTable";
 
 export interface recurrent_bills {
   id: any;
@@ -22,5 +22,5 @@ const columns = {
 };
 
 export function useRecurrentBills(){
-  return useTable<recurrent_bills>("recurrent_bills", columns);
+  return useSupaTable<recurrent_bills>("recurrent_bills", columns);
 }

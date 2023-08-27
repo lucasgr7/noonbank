@@ -2,9 +2,11 @@
 import ChartCategory from './components/ChartCategory.vue';
 import ChartInvestments from './components/ChartInvestments.vue';
 import ChartTransactions from './components/ChartTransactions.vue';
+import GroupCards from './components/GroupCards.vue';
 import HeaderView from './components/HeaderView.vue'
 import ReccurentBills from './components/ReccurentBills.vue';
 import TableStocks from './components/TableStocks.vue';
+import TableTopStocks from './components/TableTopStocks.vue';
 import TableTransactions from './components/TableTransactions.vue';
 
 </script>
@@ -38,9 +40,15 @@ import TableTransactions from './components/TableTransactions.vue';
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="Investimentos">
-          <el-row :gutter="10">
-            <el-col :span="24">
+          <el-row>
+            <GroupCards />
+          </el-row>
+          <el-row :gutter="10" style="margin-top: 8px">
+            <el-col :span="12">
               <TableStocks />
+            </el-col>
+            <el-col :span="12">
+              <TableTopStocks />
             </el-col>
           </el-row>
         </el-tab-pane>

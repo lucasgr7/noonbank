@@ -7,14 +7,13 @@ class AccountTransaction(ExtractorAbstract):
     nu = None
     url = ''
     apiKey = ''
-    limitIterations = 250
+    limitIterations = 1000
     cpf = ''
     password = ''
 
     def __init__(self, url, apiKey, limitIterations, cpf, password) -> None:
       super().__init__()
       self.nu = Nubank()
-      import pdb; pdb.set_trace()
       self.url = url
       self.apiKey = apiKey
       self.limitIterations = limitIterations

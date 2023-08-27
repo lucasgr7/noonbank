@@ -10,7 +10,7 @@ const formatMonth = (value: any, first: boolean, raw: boolean = false) => {
   const date = new Date();
   date.setMonth(date.getMonth() - (20 - value));
   if(first){
-    date.setDate(1);
+    date.setDate(0);
   }
   if(raw){
     return date;
@@ -49,7 +49,7 @@ onMounted(() => {
       :min="0"
       :max="20"
       range
-      step="1"
+      :step="1"
       :marks="marks"
       @change="updateDates"
     >

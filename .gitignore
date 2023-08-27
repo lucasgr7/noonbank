@@ -29,3 +29,4 @@ myenv/
 *.pkl
 *.p12
 *.run.py
+*.env

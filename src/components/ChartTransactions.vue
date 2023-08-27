@@ -37,7 +37,6 @@ function handleDateChange(newDate: any) {
 
 // process the data to show
 processor(totalGain, totalCost, dateRange, mergeData, options)
-watch(() => options.value, (options: any) => console.info('transaction ', options));
 
 </script>
 <template>

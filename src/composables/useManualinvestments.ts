@@ -1,4 +1,4 @@
-import { useTable } from "./useTable";
+import { useSupaTable } from "./useSupaTable";
 
 export interface investments_manual {
   id: any;
@@ -22,5 +22,5 @@ const columns = {
 };
 
 export function useManualinvestments() {
-  return useTable<investments_manual>("investments_manual", columns);
+  return useSupaTable<investments_manual>("investments_manual", columns);
 }

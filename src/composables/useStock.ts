@@ -1,4 +1,6 @@
-import { useTable } from './useTable';
+import { ref } from 'vue';
+import { useSupaTable } from './useSupaTable';
+import { supabase } from './supabase';
 
 export interface Stock {
   id: number;
@@ -27,5 +29,24 @@ const columns = {
 }
 
 export function useStock(){
-  return useTable<Stock>('stocks', columns);
+  const supabaseSupaTable =  useSupaTable<Stock>('stocks', columns);
+  const validRecrods = ref([] as Stock[]);
+
+  async function getValidStocks(){
+    const { data, error } = await supabase
+      .from('stocks')
+      .select()
+      // where quantity > 1
+      .gt('quantity', 1);
+
+    if (error) throw error;
+
+    validRecrods.value = data;
+  }
+
+  return {
+    getValidStocks,
+    validRecrods,
+    ...supabaseSupaTable
+  }
 }

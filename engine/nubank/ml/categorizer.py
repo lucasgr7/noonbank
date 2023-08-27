@@ -55,7 +55,7 @@ class Categorizer:
         if(len(data) == 0):
             print('No new rows to update')
             return
-
+        
         # Prepare data
         titles = []
         if(table_name == 'account_transactions'):

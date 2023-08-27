@@ -8,7 +8,8 @@ export interface Investment{
   closeValue: number;
 }
 
-const { records, getRecords } = useStock();
+const { validRecrods: records, getValidStocks: getRecords } = useStock();
+const dolarCottation = await getDolarCotation();
 getRecords();
 
 export const useInvestments = (period: Ref<Date[]>) => {
@@ -18,7 +19,6 @@ export const useInvestments = (period: Ref<Date[]>) => {
   watch(() => period.value, async ({startDate, endDate}: {startDate: Date, endDate: Date}) => {
     if (!records?.value) return;
     investmentsSeries.value = [];
-    const dolarCottation = await getDolarCotation();
     const calls = records.value.map(stock => getStockSum(stock.investment_type === 'brazilian_stock' ? `${stock.symbol}.SAO` : stock.symbol));
     
     const responses = await Promise.all(calls);
