@@ -45,9 +45,6 @@ import TableTransactions from './components/TableTransactions.vue';
           </el-row>
           <el-row :gutter="10" style="margin-top: 8px">
             <el-col :span="12">
-              <TableStocks />
-            </el-col>
-            <el-col :span="12">
               <TableTopStocks />
             </el-col>
           </el-row>

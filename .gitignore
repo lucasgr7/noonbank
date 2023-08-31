@@ -30,3 +30,4 @@ myenv/
 *.p12
 *.run.py
 *.env
+*.env

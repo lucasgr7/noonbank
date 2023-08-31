@@ -1,14 +1,16 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
-import { getStockData } from '../services/alhpaVantage';
+import { CompanyInfo, getStockData } from '../services/alhpaVantage';
 import _ from 'lodash';
 
 const props = defineProps(['title']);
+const fundScore = ref(0);
+const technicalScore = ref(0);
 
 const data = ref();
 
 const results = computed(() => {
-  if (!data.value) {
+  if (_.isEmpty(data.value)) {
     return [];
   }
   const adxData = data.value.stockADX['Technical Analysis: ADX'];
@@ -36,7 +38,7 @@ const results = computed(() => {
     rsi: rsiData[rsiKey].RSI,
     atr: atrData[atrKey].ATR,
     bbands: bbandsData[bbandsKey]['Real Middle Band'],
-    fundamental: data.value.fundamental,
+    fundamental: data.value.fundamental as CompanyInfo,
   }];
 })
 
@@ -44,7 +46,7 @@ const veredict = computed(() => {
   let technicalScore = 0;
   let fundamentalScore = 0;
 
-  if(results.value.length === 0) {
+  if (results.value.length === 0) {
     return { summary: 'No data', color: 'gray' };
   }
 
@@ -53,7 +55,7 @@ const veredict = computed(() => {
   const macd = parseFloat(results.value[0].macd);
   const rsi = parseFloat(results.value[0].rsi);
   const atr = parseFloat(results.value[0].atr);
-  if(!_.isEmpty(results.value[0].fundamental)){
+  if (!_.isEmpty(results.value[0].fundamental)) {
     const fundamental = results.value[0].fundamental ?? {};
     fundamentalScore = fundamentalsAnalysis(fundamental, technicalScore);
   }
@@ -89,13 +91,16 @@ function calculateTechnicalScore(adx: number, sma: number, macd: number, rsi: nu
   if (atr < 1) score += 0.2;
   else if (atr >= 1 && atr < 2) score += 0.5;
 
+
+  technicalScore.value = score;
+
   return score;
 }
 
-function fundamentalsAnalysis(fundamentalData: any, score: number): number{
-  if(!fundamentalData) { 
+function fundamentalsAnalysis(fundamentalData: any, score: number): number {
+  if (!fundamentalData) {
     return 0;
-   };
+  };
 
   let fundamentalScore = 0;
 
@@ -120,16 +125,18 @@ function fundamentalsAnalysis(fundamentalData: any, score: number): number{
 
   // Combine technical and fundamental scores
   let combinedScore = score + fundamentalScore;
+
+  fundScore.value = combinedScore;
   return combinedScore;
 }
 
-function createRecommendation(combinedScore: number){
+function createRecommendation(combinedScore: number) {
 
   // Create Recommendation
   let recommendation = "";
   let color = "";
 
-  if (combinedScore <= 0) {
+  if (combinedScore <= 1) {
     recommendation = "Sell";
     color = "#FF7F7F";
   } else if (combinedScore > 0 && combinedScore <= 3) {
@@ -148,6 +155,16 @@ function createRecommendation(combinedScore: number){
   return { recommendation, color };
 }
 
+function evToEbitdaColor(evToEbitda: number) {
+  if (evToEbitda < 10) {
+    return 'green';
+  } else if (evToEbitda >= 10 && evToEbitda < 20) {
+    return 'orange';
+  } else {
+    return 'red';
+  }
+}
+
 onMounted(async () => {
   data.value = await getStockData(props.title, 'monthly');
 })
@@ -159,7 +176,48 @@ onMounted(async () => {
         <div id="status" :style="{ 'backgroundColor': veredict.color }">{{ veredict.recommendation }}</div>
         {{ props.title }}
       </el-row>
+      <el-row justify="center">
+        <div class="box">
+          <div>Fundamental Score</div>
+          {{ fundScore }} 
+        </div>
+        <div class="box">
+          <div>Technical Score</div>
+          {{ technicalScore }}
+        </div>
+      </el-row>
     </template>
+    <div v-if="results.length > 0 && !_.isEmpty(results[0].fundamental)">
+      <el-row>
+        <b>EVToEBITDA:</b>
+        <span :style="{ marginLeft: '8px', color: evToEbitdaColor(results[0].fundamental.EVToEBITDA) }">
+          {{ results[0].fundamental.EVToEBITDA }}
+        </span>
+      </el-row>
+      <el-row>
+        <b>Target Price:</b> <span :style="{ marginLeft: '8px' }">{{ results[0].fundamental.AnalystTargetPrice  }}</span>
+      </el-row>
+      <el-row>
+        <b>Market Capitalization:</b>
+        <span :style="{ marginLeft: '8px' }">
+          {{ Number(results[0].fundamental.MarketCapitalization)  }}
+        </span>
+      </el-row>
+      <el-row>
+        <b>P/E Ratio:</b>
+        <span
+          :style="{ marginLeft: '8px', 
+            color: Number(results[0].fundamental.PERatio > 25) ? 'red' : Number(results[0].fundamental.PERatio < 10) ? 'green' : 'orange' }">
+          {{ results[0].fundamental.PERatio }}
+        </span>
+      </el-row>
+      <el-row>
+        <b>Dividend Yield:</b>
+        <span :style="{ marginLeft: '8px', color: Number(results[0].fundamental.DividendYield) > 0.05 ? 'green' : 'red' }">
+          {{ results[0].fundamental.DividendYield }}
+        </span>
+      </el-row>
+    </div>
     <el-table :data="results">
       <el-table-column prop="sma" label="SMA">
         <template #default="scope">
@@ -221,6 +279,23 @@ onMounted(async () => {
   background: white;
 
   margin: 8px;
+  max-width: 40vh;
+
+  .box{
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 8px;
+    margin: 8px;
+    text-align: center;
+    padding: 0;
+    width: auto;
+    div {
+      padding: 4px;
+      background: rgb(99, 99, 99);
+      color: white;
+      font-size: 12px;
+    }
+  }
 
   #status {
     height: auto;

@@ -251,8 +251,58 @@ export async function getStockADX(symbol: string,
   return data;
 }
 
+export interface CompanyInfo {
+  Symbol: string;
+  AssetType: string;
+  Name: string;
+  Description: string;
+  CIK: string;
+  Exchange: string;
+  Currency: string;
+  Country: string;
+  Sector: string;
+  Industry: string;
+  Address: string;
+  FiscalYearEnd: string;
+  LatestQuarter: string;
+  MarketCapitalization: string;
+  EBITDA: string;
+  PERatio: string;
+  PEGRatio: string;
+  BookValue: string;
+  DividendPerShare: string;
+  DividendYield: string;
+  EPS: string;
+  RevenuePerShareTTM: string;
+  ProfitMargin: string;
+  OperatingMarginTTM: string;
+  ReturnOnAssetsTTM: string;
+  ReturnOnEquityTTM: string;
+  RevenueTTM: string;
+  GrossProfitTTM: string;
+  DilutedEPSTTM: string;
+  QuarterlyEarningsGrowthYOY: string;
+  QuarterlyRevenueGrowthYOY: string;
+  AnalystTargetPrice: string;
+  TrailingPE: string;
+  ForwardPE: string;
+  PriceToSalesRatioTTM: string;
+  PriceToBookRatio: string;
+  EVToRevenue: string;
+  EVToEBITDA: string;
+  Beta: string;
+  "52WeekHigh": string;
+  "52WeekLow": string;
+  "50DayMovingAverage": string;
+  "200DayMovingAverage": string;
+  SharesOutstanding: string;
+  DividendDate: string;
+  ExDividendDate: string;
+}
+
+
 // get https://www.alphavantage.co/query?function=OVERVIEW&symbol=IBM&apikey=demo
-export async function getStockOverview(symbol: string): Promise<any>{
+export async function getStockOverview(symbol: string): Promise<CompanyInfo>{
   const cacheKey = `stock_overview_${symbol}`;
 
   const cachedData = getCacheData(cacheKey, SEVEN_DAYS_CACHE);
@@ -285,6 +335,6 @@ export async function getStockData(symbol: string, interval: 'strdaily' | 'weekl
     stockRSI: all[3],
     stockMACD: all[4],
     stockSMA: all[5],
-    fundamental: all[6],
+    fundamental: all[6] as CompanyInfo,
   }
 }
