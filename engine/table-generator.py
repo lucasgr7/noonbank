@@ -1,6 +1,7 @@
 import argparse
 import json
 
+
 def create_table_script(table_name, columns):
     columns_str = ', '.join([
         f"{col} {typ}{' SERIAL PRIMARY KEY' if constraints.get('key') else ''}{' NULL' if constraints.get('nullable') else ''}"
