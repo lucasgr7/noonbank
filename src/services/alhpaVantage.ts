@@ -108,7 +108,7 @@ export async function getDolarCotation(){
       return cachedData;
     }
 
-    const url = `https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=USD&to_symbol=BRL`;
+    const url = "https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=USD&to_symbol=BRL";
     const data = await fetchData(url);
     
     // get latest from data['Time Series FX (Daily)']
