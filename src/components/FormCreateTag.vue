@@ -78,7 +78,7 @@ function save() {
         </label>
       </el-col>
       <el-col :span="20">
-        <el-color-picker @change="" v-model="form.colorFont"/>
+        <el-color-picker v-model="form.colorFont"/>
       </el-col>
     </el-row>
     <el-row>

@@ -2,9 +2,21 @@
 
 const emits = defineEmits(['size-change', 'current-change']);
 const props = defineProps({
-  currentPage: Number,
-  pageSize: Number,
-  total: Number
+  currentPage: {
+    required: true,
+    type: Number,
+    default: 1
+  },
+  pageSize: {
+    required: true,
+    type: Number,
+    default: 10
+  },
+  total: {
+    required: true,
+    type: Number,
+    default: 0
+  }
 });
 
 function handleSizeChange(val: number) {

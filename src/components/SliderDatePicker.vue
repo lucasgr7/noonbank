@@ -59,6 +59,3 @@ onMounted(() => {
     </el-slider>
   </div>
 </template>
-<style lang="scss" scoped>
-
-</style>

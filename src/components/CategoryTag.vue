@@ -22,6 +22,3 @@ const category = computed(() => {
 <template>
   <el-tag :style="category.css"  class="tag"> {{ category.text }}</el-tag>
 </template>
-<style lang="scss" scoped>
-
-</style>

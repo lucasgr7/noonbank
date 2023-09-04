@@ -1,5 +1,14 @@
 <script lang="ts" setup>
-const props = defineProps(['label', 'value']);
+const props = defineProps({
+  label: {
+    type: String,
+    default: 'Label'
+  },
+  value: {
+    type: String,
+    default: 'Value'
+  }
+});
 </script>
 <template>
   <div class="noonlabel">

@@ -11,7 +11,12 @@ const { selectedMonth } = usePeriod();
 const isFormCreateTag = ref(false);
 const isFormCreateStock = ref(false);
 
-const props = defineProps(['title']);
+const props = defineProps({
+  title: {
+    type: String,
+    default: 'Dashboard'
+  }
+});
 
 function showCreateStock() {
   isFormCreateStock.value = true;

@@ -69,7 +69,7 @@ onMounted(() => {
       R$ {{  totalAmount.toLocaleString('pt-br', {minimumFractionDigits: 2}) }}
     </div>
     <ul>
-      <li v-for="(item) of recurrentBills">
+      <li v-for="(item) of recurrentBills" :key="item.label">
         <div class="circle" :class="{'dark' : item.paid, 'light': !item.paid}"></div>
         <span> {{ item.label }} - <b>R$ {{ item.value.toLocaleString('pt-br', { minimumFractionDigits: 2}) }}</b></span>
       </li>
