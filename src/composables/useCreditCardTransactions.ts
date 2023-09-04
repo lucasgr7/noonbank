@@ -47,7 +47,7 @@ export const useCreditCardTransactions = (dates: Ref<{startDate: Date, endDate: 
       .select("*", { count: "exact" })
       .gte("time", dates.value.startDate.toJSON())
       .lte("time", dates.value.endDate.toJSON());
-    totalTransactions.value = count || 0;
+    totalTransactions.value = count ?? 0;
   };
 
   async function updateCreditCardCategory(data: TypeMergeData){

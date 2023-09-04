@@ -38,11 +38,9 @@ export const useInvestments = (period: Ref<Date[]>) => {
             closeValue: Number(((value['4. close'] * records?.value[i].quantity) * baseMultiplier).toFixed(2))
           });
         }
-        if (dateObj < startDate) return false;
+        if (dateObj < startDate) return;
       });
     });
-
-    console.log('series ', investmentsSeries.value);
   });
 
   return {

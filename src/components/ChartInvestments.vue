@@ -85,7 +85,6 @@ const options = computed(() => {
       data: Array.from({ length: rangeDistance.value + 1}, () => x.value),
     })
   })
-  console.log(seriesValues)
   return new ChartOptionsBuilder().buildLineChartOptions(
     'Investimentos',
     legend,

@@ -28,7 +28,7 @@ export const useAcountTransactions = (dates: Ref<{startDate: Date, endDate: Date
   const fetchTotalCount = async () => {
     const table = "account_transactions";
     if(!filter){
-
+      return null;
     }
     const { count } = await supabase
       .from(table)
@@ -40,7 +40,7 @@ export const useAcountTransactions = (dates: Ref<{startDate: Date, endDate: Date
       .not("detail", "ilike", "Lucas Garcia%")
       .gte("postdate", dates.value.startDate.toJSON())
       .lte("postdate", dates.value.endDate.toJSON());
-    totalAccTransactions.value = count || 0;
+    totalAccTransactions.value = count ?? 0;
   };
 
   async function updateAccountCategory(data: TypeMergeData){
