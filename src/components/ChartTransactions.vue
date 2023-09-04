@@ -31,7 +31,7 @@ const options = ref();
 const totalGain = ref(0);
 const totalCost = ref(0);
 
-function handleDateChange(newDate: any) {
+function handleDateChange(newDate: Date) {
   dateRange.value = newDate;
 }
 

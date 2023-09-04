@@ -1,7 +1,7 @@
 import { useSupaTable } from "./useSupaTable";
 
 export interface investments_manual {
-  id: any;
+  id: number;
   name?: string;
   value?: any;
 }

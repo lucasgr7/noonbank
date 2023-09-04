@@ -10,6 +10,7 @@ import CategoryTag from './CategoryTag.vue';
 import { useTable } from '../composables/useTable';
 import Tableheader from './Tableheader.vue';
 import TableFooter from './TableFooter.vue';
+import _ from 'lodash';
 
 const { dates } = usePeriod();
 const { mergeData, totalAccTransactions, totalTransactions, updateAccountCategory, updateCreditCardCategory } = useMergeTransaction(dates);
@@ -49,12 +50,13 @@ function handleChangePrimaryCateogry(row: TypeMergeData) {
       updateAccountCategory(row);
     }
   }
-  catch(error: any){
-    ElNotification({
-      title: 'Error',
-      message: error.message,
-      type: 'error'
-    });
+  catch(error: unknown){
+    if(_.isError(error))
+      ElNotification({
+        title: 'Error',
+        message: error.message,
+        type: 'error'
+      });
   }
 }
 

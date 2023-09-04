@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { supabase } from './supabase';
 import { ref } from 'vue';
 
@@ -23,7 +24,10 @@ export function useCategories() {
     }
   };
 
-  const insertCategory = async (form: any) => {
+  const insertCategory = async (form: {name: string, colorFont: string, backgroundColor: string}) => {
+    // check object properties
+    if(_.isEmpty(form)) return;
+
     if (!form.name || !isValidColor(form.colorFont) || !isValidColor(form.backgroundColor)) {
       error.value = 'Invalid input';
       return;

@@ -21,7 +21,7 @@ export interface Legend {
 }
 
 export interface ToolboxFeature {
-  saveAsImage: {};
+  saveAsImage: any;
 }
 
 export interface Toolbox {

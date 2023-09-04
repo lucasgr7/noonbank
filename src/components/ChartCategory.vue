@@ -97,7 +97,7 @@ watch(() => mergeData.value, () => {
 });
 
 
-function handleDateChange(newDate: any) {
+function handleDateChange(newDate: Date) {
   dateRange.value = newDate;
 }
 
