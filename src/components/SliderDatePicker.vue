@@ -10,7 +10,7 @@ const formatMonth = (value: any, first: boolean, raw: boolean = false) => {
   const date = new Date();
   date.setMonth(date.getMonth() - (20 - value));
   if(first){
-    date.setDate(0);
+    date.setDate(1);
   }
   if(raw){
     return date;
