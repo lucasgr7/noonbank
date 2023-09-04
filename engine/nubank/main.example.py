@@ -1,6 +1,6 @@
-from ml.categorizer import Categorizer
-from data.credit_card_transaction import CreditCardTransaction
 from data.account_transaction import AccountTransaction
+from data.credit_card_transaction import CreditCardTransaction
+from ml.categorizer import Categorizer
 
 urlAccountTransaction = 'http://192.168.15.10:8000/rest/v1/account_transactions'
 url = 'http://192.168.15.10:8000/rest/v1/transactions'

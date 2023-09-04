@@ -1,9 +1,10 @@
 import os
 
-from supabase import create_client
-from joblib import load
 import numpy as np
 import requests
+from joblib import load
+from supabase import create_client
+
 
 class Categorizer:
 

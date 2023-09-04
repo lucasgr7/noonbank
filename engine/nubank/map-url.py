@@ -1,6 +1,8 @@
-import requests
 import json
 import sys
+
+import requests
+
 
 def fetch_data(url: str, api_key: str) -> dict:
     headers = {"Authorization": f"Bearer {api_key}"}
