@@ -87,11 +87,11 @@ export const processor = (
         });
       }
 
-      positiveData.map((item, index) => {
+      positiveData.forEach((item, index) => {
         positiveData[index] = parseFloat(item.toFixed(2));
         totalGain.value += parseFloat(item);
       });
-      negativeData.map((item, index) => {
+      negativeData.forEach((item, index) => {
         negativeData[index] = parseFloat(item.toFixed(2));
         totalCost.value += parseFloat(item);
       });

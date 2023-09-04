@@ -52,7 +52,7 @@ watch(() => mergeData.value, () => {
 
   const categoriesChart = Object.values(groupByCategory);
   // map all values to be simple decimal
-  categoriesChart.map((category: any) => {
+  categoriesChart.forEach((category: any) => {
     category.value = Number(category.value.toFixed(2));
   })
 

@@ -12,19 +12,19 @@ const records = computed(() => {
   if(data.value == null || data.value.top_gainers == null || data.value.top_losers == null || data.value.most_actively_traded == null){
     return [];
   }
-  const allResults = data.value.top_gainers.map((x) => {
+  let allResults = data.value.top_gainers.map((x) => {
     return {
       ...x,
       type: '🔼' }
   });
   // concat with the emoji down for top_losers
-  allResults.concat(data.value.top_losers.map((x) => {
+  allResults = allResults.concat(data.value.top_losers.map((x) => {
     return {
       ...x,
       type: '🔽' }
   }));
   // concat most active trade
-  allResults.concat(data.value.most_actively_traded.map((x) => {
+  allResults = allResults.concat(data.value.most_actively_traded.map((x) => {
     return {
       ...x,
       type: '↔️' }
