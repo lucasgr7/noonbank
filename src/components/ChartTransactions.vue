@@ -9,7 +9,7 @@ import {
   GridComponent,
 } from 'echarts/components';
 import VChart, { THEME_KEY } from 'vue-echarts';
-import { ref, provide, computed, watch } from 'vue';
+import { ref, provide } from 'vue';
 import { useMergeTransaction } from '../composables/useMergeTransaction';
 import Noonlabel from './Noonlabel.vue';
 import { processor } from '../services/transactionsProcessor';

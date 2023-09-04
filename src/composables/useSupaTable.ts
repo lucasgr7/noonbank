@@ -25,7 +25,7 @@ export function useSupaTable<T>(tableName: string, columns: TableColumns) {
     }
 
     try {
-      const { data, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from(tableName)
         .insert([form])
         .select();

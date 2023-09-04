@@ -3,7 +3,16 @@ import { computed } from 'vue';
 import { Category } from '../composables/useCategories';
 
 
-const props = defineProps(['categories', 'id']);
+const props = defineProps({
+  id: {
+    type: Number,
+    default: 0
+  },
+  categories: {
+    type: Array,
+    default: []
+  }
+});
 
 const category = computed(() => {
   // filter categories by id, and return a prop css and the name

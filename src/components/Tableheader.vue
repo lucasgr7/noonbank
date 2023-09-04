@@ -1,7 +1,12 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
-const props = defineProps(['title']);
+const props = defineProps({
+  title: {
+    type: String,
+    default: 'Title'
+  }
+});
 const emits = defineEmits(['search']);
 
 const search = ref();

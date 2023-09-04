@@ -6,7 +6,7 @@ const emits = defineEmits(['date-range-changed']);
 const sliderValue = ref([15, 20]);
 
 // Function to format slider value to month
-const formatMonth = (value: any, first: boolean, raw: boolean = false) => {
+const formatMonth = (value: any, first: boolean, raw = false) => {
   const date = new Date();
   date.setMonth(date.getMonth() - (20 - value));
   if(first){

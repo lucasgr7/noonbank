@@ -3,7 +3,12 @@ import { computed, onMounted, ref } from 'vue';
 import { CompanyInfo, getStockData } from '../services/alhpaVantage';
 import _ from 'lodash';
 
-const props = defineProps(['title']);
+const props = defineProps({
+  title: {
+    type: String,
+    default: 'Title',
+  }
+});
 const fundScore = ref(0);
 const technicalScore = ref(0);
 

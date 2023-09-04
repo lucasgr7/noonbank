@@ -5,7 +5,6 @@ import ChartTransactions from './components/ChartTransactions.vue';
 import GroupCards from './components/GroupCards.vue';
 import HeaderView from './components/HeaderView.vue'
 import ReccurentBills from './components/ReccurentBills.vue';
-import TableStocks from './components/TableStocks.vue';
 import TableTopStocks from './components/TableTopStocks.vue';
 import TableTransactions from './components/TableTransactions.vue';
 

@@ -1,6 +1,6 @@
   <script lang="ts" setup>
 
-import { computed, onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 import { usePeriod } from '../composables/period';
 import { TypeMergeData, useMergeTransaction } from '../composables/useMergeTransaction';
 import { moneyFormatter, timeFormatter } from '../helper';
