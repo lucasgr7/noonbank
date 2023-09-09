@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import _ from 'lodash';
 import { ref } from 'vue';
 
 const props = defineProps({
@@ -11,8 +12,13 @@ const emits = defineEmits(['search']);
 
 const search = ref();
 
-function handleSearch(){
+function emitSearch(){
   emits('search', search.value);
+  return;
+}
+
+function handleSearch(){
+  emitSearch();
 }
 
 </script>

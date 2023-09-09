@@ -6,10 +6,12 @@ import {
 import FormCreateTag from './FormCreateTag.vue';
 import { ref } from 'vue';
 import FormCreateStock from './FormCreateStock.vue';
+import FormCreateAccountTransaction from './FormCreateAccountTransaction.vue';
 
 const { selectedMonth } = usePeriod();
 const isFormCreateTag = ref(false);
 const isFormCreateStock = ref(false);
+const isFormCreateAccountTransaction = ref(false);
 
 const props = defineProps({
   title: {
@@ -24,11 +26,17 @@ function showCreateStock() {
 function showCreateCategory() {
   isFormCreateTag.value = true;
 }
+function showCreateAccountTransaction() {
+  isFormCreateAccountTransaction.value = true;
+}
 function closeCategory() {
   isFormCreateTag.value = false;
 }
 function closeStock() {
   isFormCreateStock.value = false;
+}
+function closeFormAccountTransaction(){
+  isFormCreateAccountTransaction.value = false;
 }
 
 </script>
@@ -36,6 +44,7 @@ function closeStock() {
 <template>
   <FormCreateTag :visible="isFormCreateTag" @close="closeCategory" />
   <FormCreateStock :visible="isFormCreateStock" @close="closeStock" />
+  <FormCreateAccountTransaction :visible="isFormCreateAccountTransaction" @close="closeFormAccountTransaction" />
     <el-row class="container" align="middle">
       <el-col :lg="8" :md="8" :sm="6" :xs="24">
         <h2 class="title">{{ props.title }}</h2>
@@ -53,6 +62,11 @@ function closeStock() {
           <el-col :span="6">
             <el-button :icon="Plus" type="warning" @click="showCreateStock" round>
               Novo Ativo
+            </el-button>
+          </el-col>
+          <el-col :span="6">
+            <el-button :icon="Plus" type="danger" @click="showCreateAccountTransaction" round>
+              Nova Transação
             </el-button>
           </el-col>
         </el-row>
@@ -98,4 +112,5 @@ function closeStock() {
     margin-top: 20px;
   }
 }
+
 </style>

@@ -11,6 +11,7 @@ import { useTable } from '../composables/useTable';
 import Tableheader from './Tableheader.vue';
 import TableFooter from './TableFooter.vue';
 import _ from 'lodash';
+import SelectCategory from './SelectCategory.vue';
 
 const { dates } = usePeriod();
 const { mergeData, totalAccTransactions, totalTransactions, updateAccountCategory, updateCreditCardCategory } = useMergeTransaction(dates);
@@ -25,24 +26,18 @@ const { columnSort,
   chunckedData } = useTable(mergeData, 'description');
 
 
-function computedCss(form: any) {
-  return {
-    color: form.color_font,
-    backgroundColor: form.background_color,
-    border: `1px solid ${form.color_font}`,
-    fontSize: '14px'
-  }
-}
 
-function handleChangePrimaryCateogry(row: TypeMergeData) {
+function handleChangePrimaryCateogry(selectedCateogry: number, row: TypeMergeData) {
   // validate primaryCategory with notification
-  if (!row.categoryId) {
+  if (!selectedCateogry) {
     ElNotification({
       title: 'Error',
       message: 'Please select a category',
       type: 'error'
     });
   }
+
+  row.categoryId= selectedCateogry;
   try{
     if (row.type === 'credit') {
       updateCreditCardCategory(row);
@@ -67,24 +62,19 @@ function handleClearCategory(row: TypeMergeData){
 onMounted(() => {
   getCategories();
 })
-
 </script>
 <template>
-  <Tableheader title="Trançasões" @change="handleSearch" />
+  <Tableheader title="Trançasões" @search="handleSearch" />
   <el-table id="table-transactions" @sort-change="columnSort" :data="chunckedData" style="width: 100%">
     <el-table-column sortable prop="signal" label="Tipo" :width="50"></el-table-column>
     <el-table-column sortable prop="description" label="Description" :width="300"></el-table-column>
     <el-table-column sortable prop="amount" :formatter="moneyFormatter" :width="100" label="Amount"></el-table-column>
     <el-table-column sortable prop="categoryId" label="Category" :width="130">
       <template #default="scope">
-        <el-select v-if="!scope.row.categoryId && scope.row.typeValue !== 'plus'" placeholder="Select Category"
-          v-model="scope.row.categoryId" @change="handleChangePrimaryCateogry(scope.row)">
-          <el-option v-for="category in categories" :key="category.id" :label="category.name" :value="category.id">
-            <el-tag :style="computedCss(category)" class="tag">
-              {{ category.name }}
-            </el-tag>
-          </el-option>
-        </el-select>
+        <SelectCategory  
+          v-if="!scope.row.categoryId && scope.row.typeValue !== 'plus'"
+          :categories="categories"
+          @change="(evt) => handleChangePrimaryCateogry(evt, scope.row)" />
         <span v-else>
           <CategoryTag v-if="scope.row.categoryId && (categories?.length ?? 0) > 0" :categories="categories" @click="handleClearCategory(scope.row)" :id="scope.row.categoryId" />
         </span>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import ChartCategory from './components/ChartCategory.vue';
 import ChartInvestments from './components/ChartInvestments.vue';
 import ChartTransactions from './components/ChartTransactions.vue';
@@ -8,15 +9,20 @@ import ReccurentBills from './components/ReccurentBills.vue';
 import TableTopStocks from './components/TableTopStocks.vue';
 import TableTransactions from './components/TableTransactions.vue';
 
-</script>
+const activeTab = ref();
+const TABS = {
+  CASH_FLOW: 0,
+  INVESTMENTS: '1'
+}
 
+</script>
 <template>
   <el-card id="body">
     <HeaderView :title="'Relatório de Gastos'"/>
     <hr/>
     <el-main>
       <!-- el-tabs investment and debt -->
-      <el-tabs>
+      <el-tabs v-model="activeTab">
         <el-tab-pane label="Fluxo de caixa">
           <el-row :gutter="10">
             <el-col :span="5">
@@ -39,14 +45,16 @@ import TableTransactions from './components/TableTransactions.vue';
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="Investimentos">
-          <el-row>
-            <GroupCards />
-          </el-row>
-          <el-row :gutter="10" style="margin-top: 8px">
-            <el-col :span="12">
-              <TableTopStocks />
-            </el-col>
-          </el-row>
+          <div v-if="activeTab === TABS.INVESTMENTS">
+            <el-row>
+              <GroupCards />
+            </el-row>
+            <el-row :gutter="10" style="margin-top: 8px">
+              <el-col :span="12">
+                <TableTopStocks />
+              </el-col>
+            </el-row>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </el-main>

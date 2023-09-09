@@ -45,5 +45,10 @@ export function checkTypeValue(type: string | null){
     return 'plus';
   }
   return 'minus';
+}
 
+// generate guid in this format 64df5a42-97a9-42e9-bde5-94421fe3a6bf
+export function generateGuid() : stirng {
+  const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  return `${s4()}${s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
 }

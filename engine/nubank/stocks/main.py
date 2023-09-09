@@ -1,5 +1,3 @@
-xx
-
 # Limit to the last 90 days
 data_90_days = data.iloc[:90]
 
