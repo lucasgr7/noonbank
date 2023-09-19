@@ -1,4 +1,4 @@
-  <script lang="ts" setup>
+<script lang="ts" setup>
 
 import { onMounted } from 'vue';
 import { usePeriod } from '../composables/period';
@@ -14,16 +14,21 @@ import _ from 'lodash';
 import SelectCategory from './SelectCategory.vue';
 
 const { dates } = usePeriod();
-const { mergeData, totalAccTransactions, totalTransactions, updateAccountCategory, updateCreditCardCategory } = useMergeTransaction(dates);
+const { mergeData,
+   updateAccountCategory, 
+   updateCreditCardCategory,
+   search } = useMergeTransaction(dates);
 const { getCategories, categories } = useCategories();
 
 const { columnSort, 
+  handleSizeChange,
+  handleCurrentChange,
   currentPage, 
   pageSize, 
-  handleSizeChange, 
-  handleCurrentChange, 
-  handleSearch,
-  chunckedData } = useTable(mergeData, 'description');
+  totalCost,
+  totalGain,
+  totalNumerOfLines,
+  chunckedData } = useTable(mergeData, 'description', true);
 
 
 
@@ -55,6 +60,10 @@ function handleChangePrimaryCateogry(selectedCateogry: number, row: TypeMergeDat
   }
 }
 
+function handleSearch(query: string){
+  search(query);
+}
+
 function handleClearCategory(row: TypeMergeData){
   row.categoryId = null;
 }
@@ -82,10 +91,18 @@ onMounted(() => {
     </el-table-column>
     <el-table-column sortable prop="time" label="Time" :formatter="timeFormatter"></el-table-column>
   </el-table>
+  <el-row>
+    <el-col>
+      Total gasto: {{ totalCost.toLocaleString('currency') }}
+    </el-col>
+    <el-col>
+      Total ganho: {{ totalGain.toLocaleString('currency') }}
+    </el-col>
+  </el-row>
   <TableFooter 
     @current-change="handleCurrentChange" 
     @size-change="handleSizeChange" 
-    :total="totalTransactions + totalAccTransactions"
+    :total="totalNumerOfLines"
     :page-size="pageSize" 
     :current-page="currentPage" />
 

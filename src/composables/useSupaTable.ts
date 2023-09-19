@@ -69,6 +69,21 @@ export function useSupaTable<T>(tableName: string, columns: TableColumns) {
     }
   }
 
+  async function search(query: string){
+    try {
+      const { data, error: selectError } = await supabase
+        .from(tableName)
+        .select()
+        .textSearch('name', query);
+
+      if (selectError) throw selectError;
+      return data;
+    } catch (err) {
+      error.value = err;
+      return null;
+    }
+  }
+
   async function deleteRecord(id: number) {
     try {
       const { error: deleteError } = await supabase
@@ -101,6 +116,7 @@ export function useSupaTable<T>(tableName: string, columns: TableColumns) {
     getRecords,
     updateRecord,
     deleteRecord,
-    getRecordById
+    getRecordById,
+    search
   };
 }

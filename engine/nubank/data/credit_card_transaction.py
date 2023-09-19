@@ -29,7 +29,6 @@ class CreditCardTransaction(ExtractorAbstract):
           limit -= 1
           if limit == 0:
             break
-        # blue
       
 
     def transform(self, transaction):

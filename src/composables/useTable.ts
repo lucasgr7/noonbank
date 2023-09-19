@@ -1,11 +1,14 @@
 import { Ref, computed, ref } from "vue";
 
 
-export function useTable(data: Ref, keyColumnFilter: string){
+export function useTable(data: Ref, keyColumnFilter: string, calculateTotal = false){
   
   const pageSize = ref(10);
   const currentPage = ref(1);
   const search = ref('');
+  const totalNumerOfLines = ref(0);
+  const totalGain = ref(0);
+  const totalCost = ref(0);
   const sortingColumn = ref({
     order: 'descending', // or 'descending'
     prop: 'time', // property to sort by
@@ -25,8 +28,25 @@ export function useTable(data: Ref, keyColumnFilter: string){
     search.value = value;
   }
 
+  function calculateTotals(){
+    totalGain.value = 0;
+    totalCost.value = 0;
+    totalNumerOfLines.value = data.value.length;
+    data.value.forEach((item: any) => {
+      if (item.typeValue === "plus") {
+        totalGain.value += item.amount;
+      } else if (item.typeValue === "minus") {
+        totalCost.value += item.amount;
+      }
+    });
+  }
+
+
   const chunckedData = computed(() => {
     const { order, prop } = sortingColumn.value;
+
+    if(calculateTotal) calculateTotals();
+  
     if(search.value){
       const result = data.value.filter((item: any) => {
         return item[keyColumnFilter].toLowerCase().includes(search.value.toLowerCase());
@@ -59,8 +79,11 @@ export function useTable(data: Ref, keyColumnFilter: string){
     handleCurrentChange,
     handleSearch,
     columnSort,
+    totalNumerOfLines,
     pageSize,
     currentPage,
-    search
+    search,
+    totalGain,
+    totalCost
   }
 }

@@ -136,7 +136,6 @@ onMounted(() => {
       </el-col>
     </el-row>
   </el-form>
-  {{  form  }}
   <template #footer>
     <el-button @click="handleClean">Limpar</el-button>
     <el-button type="primary" @click="save">Salvar</el-button>

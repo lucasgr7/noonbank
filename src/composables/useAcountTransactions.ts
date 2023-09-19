@@ -63,6 +63,24 @@ export const useAcountTransactions = (dates?: Ref<{startDate: Date, endDate: Dat
        
   }
 
+  async function searchAccountTransaction(query: string){
+    const table = "account_transactions";
+    const { data } = await supabase
+      .from(table)
+      .select("*")
+      .neq("title", "Dinheiro resgatado")
+      .neq("title", "Dinheiro guardado")
+      .neq("title", "Pagamento da fatura")
+      .not("detail", "ilike", "AVENUE SECURITIES DTVM LTDA%")
+      .not("detail", "ilike", "Lucas Garcia%")
+      .ilike("detail", `%${query}%`)
+      .order("postdate", { ascending: false })
+    accTransactions.value = transform(data);
+
+    // Fetch total count if needed (only once or when data changes)
+    fetchTotalCount();
+  }
+
   if(dates !== null){
     watch(() => dates.value, async (newDate) => {
       if(!newDate) return;
@@ -88,5 +106,9 @@ export const useAcountTransactions = (dates?: Ref<{startDate: Date, endDate: Dat
     );
   }
   
-  return { accTransactions, totalAccTransactions, updateAccountCategory, insertAccountTransanction}
+  return { accTransactions, 
+    totalAccTransactions, 
+    updateAccountCategory, 
+    insertAccountTransanction,
+    searchAccountTransaction}
 }

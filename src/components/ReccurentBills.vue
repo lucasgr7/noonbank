@@ -10,39 +10,42 @@ const { dates } = usePeriod();
 const { mergeData } = useMergeTransaction(dates);
 
 const recurrentBills = computed(() => {
-  if(!records.value) return [];
+  if (!records.value) return [];
 
-  const result = [] as {label: string, value: number, paid: boolean}[];
+  const result = [] as { label: string, value: number, paid: boolean }[];
 
-  for(let i = 0; i < records.value.length; i++){
+  for (let i = 0; i < records.value.length; i++) {
     const record = records.value[i];
-    // filter all the recrods that match like %% with the record.key
+    const keys = record.key.toLocaleLowerCase().split(',');
 
-    // if record.key contains a comma split and try find any of the options
-    const keys = record.key.split(',');
-    const merge = mergeData.value.find((item) => {
-      for(let i = 0; i < keys.length; i++){
-        if(item.description.includes(keys[i])) return true;
+    const sum = mergeData.value.reduce((acc, item) => {
+      for (let i = 0; i < keys.length; i++) {
+        if (item.description.toLocaleLowerCase().includes(keys[i])) {
+          return acc + Number(item.amount);
+        }
       }
-      return false;
-    });
-    if(merge){
+      return acc;
+    }, 0);
+
+    if (sum > 0) {
       result.push({
         label: record.label,
-        value: Number(merge.amount),
-        paid: true
-      })
-    }
-    else{
+        value: sum,
+        paid: true,
+      });
+    } else {
       result.push({
         label: record.label,
         value: 0,
-        paid: false
-      })
+        paid: false,
+      });
     }
   }
+
   return result.sort((a, b) => a.label.localeCompare(b.label));
-})
+});
+
+
 const total = computed(() => {
   if(!recurrentBills.value) return 0;
   return recurrentBills.value.length;
@@ -63,6 +66,9 @@ onMounted(() => {
 <template>
   <el-card id="recurrent-debts">
     <el-row justify="center">
+      <el-icon class="camera-icon">
+        <Camera />
+      </el-icon>
       <h1> <span class="color-dark">{{totalPaid}}</span>/<span class="color-light">{{total}}</span></h1>
     </el-row>
     <div class="total-amount">
@@ -128,6 +134,15 @@ onMounted(() => {
     align-items: center;
     justify-content: center;
 
+  }
+  .camera-icon > svg{
+    position: absolute;
+    margin-right: 6vh;
+    padding: 1vh;
+    background: rgb(144, 143, 143);
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
   }
 }
 </style>

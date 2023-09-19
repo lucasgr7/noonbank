@@ -16,8 +16,14 @@ export interface TypeMergeData {
 }
 
 export function useMergeTransaction(dates: Ref<{startDate: Date, endDate: Date}>){
-  const { transactions, totalTransactions, updateCreditCardCategory } = useCreditCardTransactions(dates);
-  const { accTransactions, totalAccTransactions, updateAccountCategory } = useAcountTransactions(dates);
+  const { transactions, 
+    totalTransactions, 
+    updateCreditCardCategory,
+  searchCreditCard } = useCreditCardTransactions(dates);
+  const { accTransactions, 
+    totalAccTransactions, 
+    updateAccountCategory,
+    searchAccountTransaction } = useAcountTransactions(dates);
 
   const mergeData = computed(() => {
 
@@ -69,5 +75,11 @@ export function useMergeTransaction(dates: Ref<{startDate: Date, endDate: Date}>
     });
     return merged as TypeMergeData[];
   });
-  return {mergeData, totalTransactions, totalAccTransactions, accTransactions, transactions, updateAccountCategory, updateCreditCardCategory}
+
+  function search(query: string){
+    const resultCreditCard = searchCreditCard(query);
+    const resultAccount = searchAccountTransaction(query);
+    return Promise.all([resultCreditCard, resultAccount]);
+  }
+  return {mergeData, totalTransactions, search, totalAccTransactions, accTransactions, transactions, updateAccountCategory, updateCreditCardCategory}
 }

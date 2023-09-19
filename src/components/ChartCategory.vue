@@ -36,6 +36,7 @@ watch(() => mergeData.value, () => {
   const groupByCategory = mergeData.value.reduce((acc: any, cur: TypeMergeData) => {
     const { categoryId, amount } = cur;
     if (!categoryId) return acc;
+    if(cur.typeValue === 'plus') return acc;
 
     if (!acc[categoryId]) {
       const categoryName: string = categories.value.find((category: Category) => category.id === categoryId)?.name;

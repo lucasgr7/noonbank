@@ -30,10 +30,7 @@ export const useCreditCardTransactions = (dates: Ref<{startDate: Date, endDate: 
     return data.map((item: any) => {
       return {
         ...item,
-        amount: (item.amount / 100).toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }),
+        amount: (item.amount / 100),
         time: new Date(item.time).toLocaleString("pt-BR", {
           timeZone: "America/Sao_Paulo",
         }),
@@ -57,6 +54,20 @@ export const useCreditCardTransactions = (dates: Ref<{startDate: Date, endDate: 
       .eq("id", data.id);
   }
 
+
+  async function searchCreditCard(query: string){
+    const table = "transactions";
+    const { data } = await supabase
+      .from(table)
+      .select("*")
+      .order("time", { ascending: false })
+      .ilike("description", `%${query}%`)
+    transactions.value = transform(data);
+
+    // Fetch total count if needed (only once or when data changes)
+    fetchTotalCount();
+  }
+
   watch(() => dates.value, async (newDate) => {
     if(!newDate) return;
     const table = "transactions";
@@ -74,5 +85,5 @@ export const useCreditCardTransactions = (dates: Ref<{startDate: Date, endDate: 
     { immediate: true, deep: true }
   );
   
-  return { transactions, totalTransactions, updateCreditCardCategory}
+  return { transactions, totalTransactions, searchCreditCard, updateCreditCardCategory}
 };
