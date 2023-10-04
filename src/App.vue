@@ -59,6 +59,7 @@ const TABS = {
       </el-tabs>
     </el-main>
   </el-card>
+  hello world
 </template>
 
 <style lang="scss" scoped>

@@ -13,9 +13,15 @@ export const usePeriod = () => {
     const endDate = new Date(month.getFullYear(), month.getMonth() + 1, 0);
     return {startDate, endDate};
   })
+  const previousMonthDates = computed(() => {
+    const month = selectedMonth.value;
+    const startDate = new Date(month.getFullYear(), month.getMonth() - 1, 1);
+    const endDate = new Date(month.getFullYear(), month.getMonth(), 0);
+    return {startDate, endDate};
+  });
   changeDate(selectedMonth.value);
 
   return {
-    selectedMonth, dates, changeDate
+    selectedMonth, dates, changeDate, previousMonthDates
   }
 }

@@ -1,0 +1,1 @@
+CREATE TABLE snapshot_recurrnt_bills (id SERIAL PRIMARY KEY, date date, value numeric, reccurent_id numeric);

@@ -20,7 +20,7 @@ export function useSupaTable<T>(tableName: string, columns: TableColumns) {
     );
 
     if (invalidInput) {
-      error.value = 'Invalid input';
+      throw new Error('Invalid input, check if all required fields are filled');
       return;
     }
 

@@ -1,63 +1,90 @@
 <script lang="ts" setup>
-import { computed, onMounted } from 'vue';
+import { Ref, computed, onMounted, unref } from 'vue';
 import { useRecurrentBills } from '../composables/useRecurrentBills';
 import { usePeriod } from '../composables/period';
 import { useMergeTransaction } from '../composables/useMergeTransaction';
+import { snapshot_recurrnt_bills, useSnapshotRecurrentBills } from '../composables/useSnapshotRecurrentBills';
+import _ from 'lodash';
 
+const { insertRecord } = useSnapshotRecurrentBills();
 
-const {records, getRecords} = useRecurrentBills();
-const { dates } = usePeriod();
+const { dates, previousMonthDates } = usePeriod();
+const { records, getRecords } = useRecurrentBills();
 const { mergeData } = useMergeTransaction(dates);
+const { mergeData: previousMergeData } = useMergeTransaction(previousMonthDates);
+
+interface recurrentBillView {
+  label: string;
+  value: number;
+  paid: boolean;
+  id: number;
+}
 
 const recurrentBills = computed(() => {
-  if (!records.value) return [];
-
-  const result = [] as { label: string, value: number, paid: boolean }[];
-
-  for (let i = 0; i < records.value.length; i++) {
-    const record = records.value[i];
-    const keys = record.key.toLocaleLowerCase().split(',');
-
-    const sum = mergeData.value.reduce((acc, item) => {
-      for (let i = 0; i < keys.length; i++) {
-        if (item.description.toLocaleLowerCase().includes(keys[i])) {
+  if (!records.value || !previousMergeData) return [];
+  
+  const calcSum = (data: Ref | any, keys: string[]) => {
+    // validate if data has value or not
+    data = unref(data);
+    return data.reduce((acc, item) => {
+      for (const key of keys) {
+        if (item.description.toLocaleLowerCase().includes(key)) {
           return acc + Number(item.amount);
         }
       }
       return acc;
     }, 0);
+  };
+  
+  const result: recurrentBillView[] = records.value.map(record => {
+    const keys = record.key.toLocaleLowerCase().split(',');
+    const currentSum = calcSum(mergeData.value, keys);
+    const previousSum = calcSum(previousMergeData, keys);
+    // calculate the difference between current and previous month in percentual
+    // if the currentSum is 0 then the difference is null
 
-    if (sum > 0) {
-      result.push({
-        label: record.label,
-        value: sum,
-        paid: true,
-      });
-    } else {
-      result.push({
-        label: record.label,
-        value: 0,
-        paid: false,
-      });
-    }
-  }
+    const diff = currentSum === 0 ? null : _.round(((currentSum - previousSum) / currentSum) * 100);
+    
+    return {
+      label: record.label,
+      value: currentSum,
+      difference: diff,
+      paid: currentSum > 0,
+      id: record.id,
+    };
+  });
 
   return result.sort((a, b) => a.label.localeCompare(b.label));
 });
 
-
 const total = computed(() => {
-  if(!recurrentBills.value) return 0;
+  if (!recurrentBills.value) return 0;
   return recurrentBills.value.length;
 })
 const totalPaid = computed(() => {
-  if(!recurrentBills.value) return 0;
+  if (!recurrentBills.value) return 0;
   return recurrentBills.value.filter((item) => item.paid).length;
 })
 const totalAmount = computed(() => {
-  if(!recurrentBills.value) return 0;
+  if (!recurrentBills.value) return 0;
   return recurrentBills.value.reduce((acc, item) => acc + item.value, 0);
 })
+
+function takeSnapshot(){
+  try{
+    recurrentBills.value.forEach((recurrentBill: recurrentBillView) => {
+      const { value } = recurrentBill;
+      const record = {
+        date: dates.value.startDate,
+        value: value,
+        reccurent_id: recurrentBill.id,
+      } as snapshot_recurrnt_bills;
+      insertRecord(record);
+    });
+  }catch(error: any){
+    console.error(error);
+  }
+}
 
 onMounted(() => {
   getRecords();
@@ -66,30 +93,63 @@ onMounted(() => {
 <template>
   <el-card id="recurrent-debts">
     <el-row justify="center">
-      <el-icon class="camera-icon">
+      <el-icon class="camera-icon" @click="takeSnapshot">
         <Camera />
       </el-icon>
-      <h1> <span class="color-dark">{{totalPaid}}</span>/<span class="color-light">{{total}}</span></h1>
+      <h1> <span class="color-dark">{{ totalPaid }}</span>/<span class="color-light">{{ total }}</span></h1>
     </el-row>
     <div class="total-amount">
-      R$ {{  totalAmount.toLocaleString('pt-br', {minimumFractionDigits: 2}) }}
+      R$ {{ totalAmount.toLocaleString('pt-br', { minimumFractionDigits: 2 }) }}
     </div>
-    <ul>
-      <li v-for="(item) of recurrentBills" :key="item.label">
-        <div class="circle" :class="{'dark' : item.paid, 'light': !item.paid}"></div>
-        <span> {{ item.label }} - <b>R$ {{ item.value.toLocaleString('pt-br', { minimumFractionDigits: 2}) }}</b></span>
-      </li>
-    </ul>
+    <el-table :data="recurrentBills" class="table-recurrent-bills">
+      <el-table-column prop="label" label="Descrição" width="90">
+        <template #default="{ row }">
+          <b :class="row.paid ? 'color-dark' : 'color-light'">{{ row.label }}</b>
+        </template>
+      </el-table-column>
+      <el-table-column prop="value" label="Valor" width="90">
+        <template #default="{ row }">
+          R$ {{ row.value.toLocaleString('pt-br', { minimumFractionDigits: 2 }) }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="paid" label="Pago" width="65">
+        <template #default="{ row }">
+          <b :class="{'f-green': row.difference < 0, 'f-red': row.difference > 0, 'hidden': row.difference === 0 || row.difference == null}">
+            {{ row.difference }}%
+          </b>        
+        </template>
+      </el-table-column>
+    </el-table>
   </el-card>
 </template>
-<style lang="scss" scoped>
-#recurrent-debts{
-  background: white;
-  height: 100%;
-  max-height: 57.4vh;
+<style lang="scss">
+#recurrent-debts {
+  background: white;  
   overflow-y: auto;
+  font-size: 12px !important;
+  .f-green{
+    color: #2a670c;
+  }
+  .f-red{
+    color: #c4260a;
+  }
+  .hidden{
+    visibility: hidden;
+  }
 
-  h1{    
+  .el-card__body {
+    padding-inline: 0px !important;
+    .el-table__cell{
+      padding: 0px !important;
+      font-size: 12px !important;
+      // text don't break line
+      b{
+        white-space: nowrap;
+      }
+    }
+  }
+
+  h1 {
     font-size: 55px;
     padding: 0;
     margin: 7px;
@@ -97,36 +157,31 @@ onMounted(() => {
     font-weight: revert;
     margin: 0;
   }
-  ul{
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    li{
-      display: flex;
-      align-items: center;
-      margin: 10px 0;
-      color: gray;
-      .circle{
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        margin-right: 10px;
-      }
-    }
+
+  .circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 10px;
   }
-  .light{
+
+  .light {
     background: #dab68e;
   }
-  .color-light{
+
+  .color-light {
     color: #dab68e;
   }
-  .dark{
+
+  .dark {
     background: #2a670c;
   }
-  .color-dark{
+
+  .color-dark {
     color: #2a670c;
   }
-  .total-amount{
+
+  .total-amount {
     // border top 2 px black
     border-top: 2px solid black;
     // align middle
@@ -135,7 +190,8 @@ onMounted(() => {
     justify-content: center;
 
   }
-  .camera-icon > svg{
+
+  .camera-icon>svg {
     position: absolute;
     margin-right: 6vh;
     padding: 1vh;
@@ -144,5 +200,17 @@ onMounted(() => {
     color: white;
     cursor: pointer;
   }
-}
-</style>
+
+  .table-recurrent-bills {
+    margin-top: 10px;
+
+    .el-table__header-wrapper {
+      display: none;
+    }
+
+    .el-table__body-wrapper {
+      max-height: 40vh;
+      overflow-y: auto;
+    }
+  }
+}</style>

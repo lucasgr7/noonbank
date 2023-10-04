@@ -78,11 +78,11 @@
       "close_date": "2023-12-09",
       "past_balance": 0,
       "effective_due_date": "2023-12-18",
-      "spent_amount": "573.73",
-      "total_balance": 57373,
+      "spent_amount": "573.72",
+      "total_balance": 57372,
       "interest_rate": "0.161",
       "interest": 0,
-      "total_cumulative": 57373,
+      "total_cumulative": 57372,
       "paid": 0,
       "minimum_payment": 0,
       "open_date": "2023-11-09"
@@ -96,11 +96,11 @@
       "close_date": "2023-11-09",
       "past_balance": 0,
       "effective_due_date": "2023-11-16",
-      "spent_amount": "573.73",
-      "total_balance": 57373,
+      "spent_amount": "878.84",
+      "total_balance": 87884,
       "interest_rate": "0.161",
       "interest": 0,
-      "total_cumulative": 57373,
+      "total_cumulative": 87884,
       "paid": 0,
       "minimum_payment": 0,
       "open_date": "2023-10-09"
@@ -108,40 +108,22 @@
     "_links": {}
   },
   {
-    "state": "future",
+    "state": "open",
     "summary": {
       "due_date": "2023-10-16",
       "close_date": "2023-10-09",
-      "past_balance": 0,
-      "effective_due_date": "2023-10-16",
-      "spent_amount": "1039.33",
-      "total_balance": 103933,
-      "interest_rate": "0.161",
-      "interest": 0,
-      "total_cumulative": 103933,
-      "paid": 0,
-      "minimum_payment": 0,
-      "open_date": "2023-09-09"
-    },
-    "_links": {}
-  },
-  {
-    "state": "open",
-    "summary": {
-      "due_date": "2023-09-16",
-      "close_date": "2023-09-09",
       "late_interest_rate": "0.171",
       "past_balance": 0,
       "late_fee": "0.02",
-      "effective_due_date": "2023-09-18",
-      "spent_amount": "5905.804978",
-      "total_balance": 587593,
+      "effective_due_date": "2023-10-16",
+      "spent_amount": "2483.703464",
+      "total_balance": 248370,
       "interest_rate": "0.161",
       "interest": 0,
-      "total_cumulative": 587593,
+      "total_cumulative": 248370,
       "paid": 0,
       "minimum_payment": 0,
-      "open_date": "2023-08-09"
+      "open_date": "2023-09-09"
     },
     "_links": {
       "self": {
@@ -156,12 +138,45 @@
     }
   },
   {
+    "id": "64fbe72d-f95a-47c1-a5b6-af0a5c81d505",
+    "state": "closed",
+    "summary": {
+      "remaining_balance": 861869,
+      "due_date": "2023-09-16",
+      "close_date": "2023-09-09",
+      "late_interest_rate": "0.171",
+      "past_balance": 0,
+      "effective_due_date": "2023-09-18",
+      "spent_amount": "8648.564978",
+      "total_balance": 861869,
+      "interest_rate": "0.161",
+      "interest": 0,
+      "total_cumulative": 861869,
+      "paid": 0,
+      "minimum_payment": 129280,
+      "remaining_minimum_payment": 129280,
+      "open_date": "2023-08-09"
+    },
+    "installment_button": {
+      "label": "PARCELAR",
+      "href": "nuapp://credit-card/voluntary-financing"
+    },
+    "_links": {
+      "finance_bill": {
+        "href": "https://prod-s2-facade.nubank.com.br/api/bills/64fbe72d-f95a-47c1-a5b6-af0a5c81d505/financing"
+      },
+      "self": {
+        "href": "https://prod-s2-facade.nubank.com.br/api/bills/64fbe72d-f95a-47c1-a5b6-af0a5c81d505"
+      }
+    }
+  },
+  {
     "id": "64d30943-7843-418e-998d-b99d9f797f76",
     "state": "overdue",
     "summary": {
-      "remaining_balance": 0,
       "due_date": "2023-08-16",
       "close_date": "2023-08-09",
+      "late_interest_rate": "0.171",
       "past_balance": 0,
       "effective_due_date": "2023-08-16",
       "spent_amount": "6233.101826",
@@ -171,7 +186,6 @@
       "total_cumulative": 623310,
       "paid": 0,
       "minimum_payment": 93496,
-      "remaining_minimum_payment": 0,
       "open_date": "2023-07-09"
     },
     "_links": {
@@ -186,6 +200,7 @@
     "summary": {
       "due_date": "2023-07-16",
       "close_date": "2023-07-09",
+      "late_interest_rate": "0.171",
       "past_balance": 0,
       "effective_due_date": "2023-07-17",
       "spent_amount": "7093.91616029",
@@ -209,6 +224,7 @@
     "summary": {
       "due_date": "2023-06-16",
       "close_date": "2023-06-09",
+      "late_interest_rate": "0.171",
       "past_balance": -400000,
       "effective_due_date": "2023-06-16",
       "spent_amount": "7214.308700",
@@ -232,6 +248,7 @@
     "summary": {
       "due_date": "2023-05-16",
       "close_date": "2023-05-09",
+      "late_interest_rate": "0.171",
       "past_balance": 0,
       "effective_due_date": "2023-05-16",
       "spent_amount": "7409.194406",
@@ -255,6 +272,7 @@
     "summary": {
       "due_date": "2023-04-16",
       "close_date": "2023-04-09",
+      "late_interest_rate": "0.171",
       "past_balance": -8989,
       "effective_due_date": "2023-04-17",
       "spent_amount": "8873.258760",
@@ -278,6 +296,7 @@
     "summary": {
       "due_date": "2023-03-16",
       "close_date": "2023-03-09",
+      "late_interest_rate": "0.171",
       "past_balance": 0,
       "effective_due_date": "2023-03-16",
       "spent_amount": "6367.35",
@@ -301,6 +320,7 @@
     "summary": {
       "due_date": "2023-02-16",
       "close_date": "2023-02-09",
+      "late_interest_rate": "0.171",
       "past_balance": 0,
       "effective_due_date": "2023-02-16",
       "spent_amount": "6067.80",
@@ -324,6 +344,7 @@
     "summary": {
       "due_date": "2023-01-16",
       "close_date": "2023-01-09",
+      "late_interest_rate": "0.171",
       "past_balance": 0,
       "effective_due_date": "2023-01-16",
       "spent_amount": "7434.89860629",
@@ -347,6 +368,7 @@
     "summary": {
       "due_date": "2022-12-16",
       "close_date": "2022-12-09",
+      "late_interest_rate": "0.171",
       "past_balance": 0,
       "effective_due_date": "2022-12-16",
       "spent_amount": "6079.374198",
@@ -370,6 +392,7 @@
     "summary": {
       "due_date": "2022-11-16",
       "close_date": "2022-11-09",
+      "late_interest_rate": "0.171",
       "past_balance": 0,
       "effective_due_date": "2022-11-16",
       "spent_amount": "8420.19602429",
@@ -393,6 +416,7 @@
     "summary": {
       "due_date": "2022-10-16",
       "close_date": "2022-10-09",
+      "late_interest_rate": "0.163",
       "past_balance": -230000,
       "effective_due_date": "2022-10-17",
       "spent_amount": "9032.59075829",
@@ -416,6 +440,7 @@
     "summary": {
       "due_date": "2022-09-16",
       "close_date": "2022-09-09",
+      "late_interest_rate": "0.163",
       "past_balance": 0,
       "effective_due_date": "2022-09-16",
       "spent_amount": "6720.905200",
@@ -439,6 +464,7 @@
     "summary": {
       "due_date": "2022-08-16",
       "close_date": "2022-08-09",
+      "late_interest_rate": "0.157",
       "past_balance": -573158,
       "effective_due_date": "2022-08-16",
       "spent_amount": "5731.57925229",
@@ -462,6 +488,7 @@
     "summary": {
       "due_date": "2022-07-16",
       "close_date": "2022-07-09",
+      "late_interest_rate": "0.157",
       "past_balance": -8822,
       "effective_due_date": "2022-07-18",
       "spent_amount": "6731.507804",
@@ -485,6 +512,7 @@
     "summary": {
       "due_date": "2022-06-16",
       "close_date": "2022-06-09",
+      "late_interest_rate": "0.15",
       "past_balance": 0,
       "effective_due_date": "2022-06-17",
       "spent_amount": "5152.980620",
@@ -508,6 +536,7 @@
     "summary": {
       "due_date": "2022-05-16",
       "close_date": "2022-05-09",
+      "late_interest_rate": "0.15",
       "past_balance": -509928,
       "effective_due_date": "2022-05-16",
       "spent_amount": "11406.149330",
@@ -531,6 +560,7 @@
     "summary": {
       "due_date": "2022-04-16",
       "close_date": "2022-04-09",
+      "late_interest_rate": "0.15",
       "past_balance": -297900,
       "effective_due_date": "2022-04-18",
       "spent_amount": "5006.118604",
@@ -554,6 +584,7 @@
     "summary": {
       "due_date": "2022-03-16",
       "close_date": "2022-03-09",
+      "late_interest_rate": "0.15",
       "past_balance": -282217,
       "effective_due_date": "2022-03-16",
       "total_balance": 140772,
@@ -576,6 +607,7 @@
     "summary": {
       "due_date": "2022-02-16",
       "close_date": "2022-02-09",
+      "late_interest_rate": "0.15",
       "past_balance": -302708,
       "effective_due_date": "2022-02-16",
       "total_balance": 51278,
@@ -598,6 +630,7 @@
     "summary": {
       "due_date": "2022-01-16",
       "close_date": "2022-01-09",
+      "late_interest_rate": "0.15",
       "past_balance": -116405,
       "effective_due_date": "2022-01-17",
       "total_balance": 47733,
@@ -620,6 +653,7 @@
     "summary": {
       "due_date": "2021-12-16",
       "close_date": "2021-12-09",
+      "late_interest_rate": "0.15",
       "past_balance": -237943,
       "effective_due_date": "2021-12-16",
       "total_balance": 156567,
@@ -642,6 +676,7 @@
     "summary": {
       "due_date": "2021-11-16",
       "close_date": "2021-11-09",
+      "late_interest_rate": "0.14",
       "past_balance": -402909,
       "effective_due_date": "2021-11-16",
       "total_balance": 117533,
@@ -664,6 +699,7 @@
     "summary": {
       "due_date": "2021-10-16",
       "close_date": "2021-10-09",
+      "late_interest_rate": "0.15",
       "past_balance": -152803,
       "effective_due_date": "2021-10-18",
       "total_balance": 145579,
@@ -686,6 +722,7 @@
     "summary": {
       "due_date": "2021-09-16",
       "close_date": "2021-09-09",
+      "late_interest_rate": "0.15",
       "past_balance": -191797,
       "effective_due_date": "2021-09-16",
       "total_balance": 143417,
@@ -708,6 +745,7 @@
     "summary": {
       "due_date": "2021-08-16",
       "close_date": "2021-08-09",
+      "late_interest_rate": "0.15",
       "past_balance": -278593,
       "effective_due_date": "2021-08-16",
       "total_balance": 58953,
@@ -730,6 +768,7 @@
     "summary": {
       "due_date": "2021-07-16",
       "close_date": "2021-07-09",
+      "late_interest_rate": "0.15",
       "past_balance": -169420,
       "effective_due_date": "2021-07-16",
       "total_balance": 17610,
@@ -752,6 +791,7 @@
     "summary": {
       "due_date": "2021-06-16",
       "close_date": "2021-06-09",
+      "late_interest_rate": "0.15",
       "past_balance": 0,
       "effective_due_date": "2021-06-16",
       "total_balance": 143921,
@@ -774,6 +814,7 @@
     "summary": {
       "due_date": "2021-05-16",
       "close_date": "2021-05-09",
+      "late_interest_rate": "0.15",
       "past_balance": -198941,
       "effective_due_date": "2021-05-17",
       "total_balance": 10837,
@@ -796,6 +837,7 @@
     "summary": {
       "due_date": "2021-04-16",
       "close_date": "2021-04-09",
+      "late_interest_rate": "0.15",
       "past_balance": 0,
       "effective_due_date": "2021-04-16",
       "total_balance": 80503,
@@ -818,6 +860,7 @@
     "summary": {
       "due_date": "2021-03-16",
       "close_date": "2021-03-09",
+      "late_interest_rate": "0.15",
       "past_balance": 0,
       "effective_due_date": "2021-03-16",
       "total_balance": 89828,
@@ -840,6 +883,7 @@
     "summary": {
       "due_date": "2021-02-16",
       "close_date": "2021-02-09",
+      "late_interest_rate": "0.15",
       "past_balance": -111330,
       "effective_due_date": "2021-02-17",
       "total_balance": 24443,
@@ -862,6 +906,7 @@
     "summary": {
       "due_date": "2021-01-16",
       "close_date": "2021-01-09",
+      "late_interest_rate": "0.15",
       "past_balance": -245361,
       "effective_due_date": "2021-01-18",
       "total_balance": -1490,
@@ -884,6 +929,7 @@
     "summary": {
       "due_date": "2020-12-16",
       "close_date": "2020-12-09",
+      "late_interest_rate": "0.15",
       "past_balance": -196902,
       "effective_due_date": "2020-12-16",
       "total_balance": 21123,
@@ -906,6 +952,7 @@
     "summary": {
       "due_date": "2020-11-16",
       "close_date": "2020-11-09",
+      "late_interest_rate": "0.15",
       "past_balance": -166761,
       "effective_due_date": "2020-11-16",
       "total_balance": 5059,
@@ -928,6 +975,7 @@
     "summary": {
       "due_date": "2020-10-16",
       "close_date": "2020-10-09",
+      "late_interest_rate": "0.15",
       "past_balance": -81178,
       "effective_due_date": "2020-10-16",
       "total_balance": 45499,
@@ -950,6 +998,7 @@
     "summary": {
       "due_date": "2020-09-16",
       "close_date": "2020-09-09",
+      "late_interest_rate": "0.15",
       "past_balance": 0,
       "effective_due_date": "2020-09-16",
       "total_balance": 50550,
@@ -972,6 +1021,7 @@
     "summary": {
       "due_date": "2020-08-16",
       "close_date": "2020-08-09",
+      "late_interest_rate": "0.15",
       "past_balance": -77061,
       "effective_due_date": "2020-08-17",
       "total_balance": 33706,
