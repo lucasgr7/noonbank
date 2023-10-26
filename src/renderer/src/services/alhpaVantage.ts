@@ -65,14 +65,14 @@ function getCacheData(key: string, days: number = DAYS_TO_MS_THRESHOLD){
 
 
 async function fetchData(url: string): Promise<any> {
-  const apiKey = import.meta.env.VITE_APP_ALPHA_KEY;
+  const apiKey = import.meta.env.RENDERER_VITE_ALPHA_KEY;
   const response = await fetch(`${url}&apikey=${apiKey}`);
   const data = await response.json();
-  
+
   if (data['Information']) {
       throw new Error(data['Information']);
   }
-  
+
   return data;
 }
 
@@ -86,7 +86,7 @@ export async function getStockSum(symbol: string): Promise<APIResponse | null> {
     if (cachedData) {
       return cachedData;
     }
-    
+
     const url = `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}`;
     const data = await fetchData(url);
     cacheData(cacheKey, data);
@@ -110,7 +110,7 @@ export async function getDolarCotation(){
 
     const url = "https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=USD&to_symbol=BRL";
     const data = await fetchData(url);
-    
+
     // get latest from data['Time Series FX (Daily)']
     const latestKey = Object.keys(data['Time Series FX (Daily)'])[0];
     const dolarValue = data['Time Series FX (Daily)'][latestKey]['4. close'] as any;
@@ -139,9 +139,9 @@ export async function getTopGainersAndLosers(): Promise<StockTopGainersAndLosers
   return data as StockTopGainersAndLosers;
 }
 // get https://www.alphavantage.co/query?function=SMA&symbol=IBM&interval=weekly&time_period=10&series_type=open&apikey=demo
-export async function getStockSMA(symbol: string, 
+export async function getStockSMA(symbol: string,
   interval: 'strdaily' | 'weekly' | 'monthly',
-  time_period: number, 
+  time_period: number,
   series_type:   'close' | 'open' | 'high' | 'low'): Promise<any>{
   const cacheKey = `stock_sma_${symbol}_${interval}_${time_period}_${series_type}`;
 
@@ -178,7 +178,7 @@ export async function getStockMACD(symbol: string,
 // get https://www.alphavantage.co/query?function=RSI&symbol=IBM&interval=weekly&time_period=10&series_type=open&apikey=demo
 export async function getStockRSI(symbol: string,
   interval: 'strdaily' | 'weekly' | 'monthly',
-  time_period: number, 
+  time_period: number,
   series_type:   'close' | 'open' | 'high' | 'low'): Promise<any>{
   const cacheKey = `stock_rsi_${symbol}_${interval}_${time_period}_${series_type}`;
 

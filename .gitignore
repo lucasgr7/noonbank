@@ -31,3 +31,4 @@ myenv/
 *.run.py
 *.env
 *.env
+out/

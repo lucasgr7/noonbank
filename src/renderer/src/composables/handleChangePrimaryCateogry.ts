@@ -1,4 +1,4 @@
-import { TypeMergeData } from "../composables/useMergeTransaction";
+import { TypeMergeData } from "./useMergeTransaction";
 import { ElNotification } from "element-plus";
 
 export function handleChangePrimaryCateogry(row: TypeMergeData) {

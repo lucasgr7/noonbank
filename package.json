@@ -2,13 +2,18 @@
   "name": "noonbank",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "main": "./out/main/index.js",
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "dev": "electron-vite dev",
+    "preview": "vite preview",
+    "start": "electron-vite preview",
+    "build": "electron-vite build",
+    "build:mac": "npm run build && electron-builder --mac --config",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
+    "typecheck:web": "vue-tsc --noEmit -p tsconfig.web.json --composite false"
   },
   "dependencies": {
+    "@electron-toolkit/utils": "^2.0.1",
     "@element-plus/icons-vue": "^2.1.0",
     "@supabase/supabase-js": "^2.32.0",
     "dotenv": "^16.3.1",
@@ -19,7 +24,12 @@
     "vue-echarts": "^6.6.1"
   },
   "devDependencies": {
+    "@electron-toolkit/preload": "^2.0.0",
+    "@electron-toolkit/tsconfig": "^1.0.1",
     "@vitejs/plugin-vue": "^4.2.3",
+    "electron": "^27.0.2",
+    "electron-builder": "^24.6.4",
+    "electron-vite": "^1.0.28",
     "sass": "^1.65.1",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
