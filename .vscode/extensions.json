@@ -43,5 +43,9 @@
         "amount": 1300
       }
     }
+  ],
+  "recommendations": [
+    "ms-azuretools.vscode-azurefunctions",
+    "ms-dotnettools.csharp"
   ]
 }
