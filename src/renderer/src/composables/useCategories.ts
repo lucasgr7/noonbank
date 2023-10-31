@@ -8,7 +8,7 @@ export interface Category{
   color_font: string;
   background_color: string;
 }
-const categories = ref();
+const categories = ref<Category[]>();
 
 export function useCategories() {
   const error = ref();

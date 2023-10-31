@@ -38,10 +38,15 @@ function closeStock() {
 function closeFormAccountTransaction(){
   isFormCreateAccountTransaction.value = false;
 }
+function handleRefresh(){
+  // electron refresh
+  window.location.reload();
+}
 
 </script>
 
 <template>
+  <button type="button" class="round icon" click="handleRefresh"><el-icon><Refresh /></el-icon></button>
   <FormCreateTag :visible="isFormCreateTag" @close="closeCategory" />
   <FormCreateStock :visible="isFormCreateStock" @close="closeStock" />
   <FormCreateAccountTransaction :visible="isFormCreateAccountTransaction" @close="closeFormAccountTransaction" />
@@ -53,7 +58,7 @@ function closeFormAccountTransaction(){
         <el-date-picker v-model="selectedMonth" format="MM/YYYY" type="month" placeholder="Data" style="width: 100%;"/>
       </el-col>
       <el-col :lg="10" :md="10" :sm="10" :xs="24">
-        <el-row class="icon_container" justify="center"> 
+        <el-row class="icon_container" justify="center">
           <el-col :span="6">
             <el-button :icon="Plus" type="success" @click="showCreateCategory" round>
               Categoria
@@ -99,6 +104,34 @@ function closeFormAccountTransaction(){
   border-radius: 50%;
   margin-left: 25px;
   cursor: pointer;
+}
+
+.round.icon{
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 1);
+  border: none;
+  cursor: pointer;
+  padding: 0px;
+  width: 31px;
+  height: 31px;
+  margin-left: 25px;
+  .el-icon{
+    font-size: 16px;
+    padding: 0px;
+  }
+  // animate when hover to spin
+  &:hover{
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+      }
+  }
 }
 
 @media screen and (max-width: 767px) {
