@@ -56,7 +56,6 @@ defineExpose({
 });
 
 function render() {
-  debugger;
   let dataByMonth: any = {};
   let categories = new Set();
   if (mergeData.value == null) {
@@ -73,7 +72,7 @@ function render() {
     )}`;
     const labelCategory = props.categories.find(
       (category) => category.id === transaction.categoryId
-    )?.name;
+    )?.name?.toUpperCase();
 
     if(labelCategory == null) return;
 
@@ -121,9 +120,21 @@ function render() {
     tooltip: {
       /* your tooltip config */
     },
+    color: [
+  "#B37676", "#B38E64", "#B3A564", "#86B382",
+  "#FFD9D6", "#D9E6FF", "#D4FFD4", "#FFE6B3",
+  "#B39C64", "#8686B3", "#B37699", "#7D9CB3",
+  "#FFF0B3", "#E0E0FF", "#FFD6E8", "#E6F2FF"
+    ],
     toolbox: {
       /* your toolbox config */
     },
+    grid: {
+        top: '22%',
+        left: '1%',
+        right: '10%',
+        containLabel: true
+      },
     legend: {
       data: [...categories, "Trend"],
     },
@@ -169,5 +180,4 @@ function handleClose() {
   width: 100% auto !important;
   background: white;
   backdrop-filter: blur(10px);
-}
-</style>
+} </style>
