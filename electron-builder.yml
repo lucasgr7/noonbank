@@ -13,6 +13,7 @@ asarUnpack:
   - resources/**
 win:
   executableName: Noonbank
+  icon: resources/icon.png
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
