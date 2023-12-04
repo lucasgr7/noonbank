@@ -30,6 +30,7 @@ const medianDataGraph = ref();
 const providedMergeData = ref();
 const showModal = ref(false);
 provide("mergeData", providedMergeData);
+provide("categories", categories);
 
 use([
   CanvasRenderer,
@@ -146,7 +147,7 @@ onMounted(() => {
     </el-header>
   </el-card>
   <v-chart class="chart" :option="options" autoresize />
-  <median-category-costs :categories="categories" ref="median" />
+  <median-category-costs  ref="median" />
     <el-button
       :class="{ selected: selectedView === 'avg' }"
       @click="handleMedianVisibilityChange"
