@@ -23,7 +23,7 @@ Deprecated==1.2.14
 executing==1.2.0
 fastjsonschema==2.18.0
 fqdn==1.5.1
-idna==3.4
+idna==3.7
 ipykernel==6.25.1
 ipython==8.14.0
 isoduration==20.11.0
