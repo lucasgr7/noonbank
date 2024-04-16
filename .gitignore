@@ -30,5 +30,9 @@ myenv/
 *.p12
 *.run.py
 *.env
-*.env
+*.env/
+# ignore \env\... from python env
+/env/
+/engine/fake-data-generator/env/
+*.csv
 out/
