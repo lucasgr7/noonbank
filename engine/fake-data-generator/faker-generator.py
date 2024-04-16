@@ -1,8 +1,9 @@
 import random
-from faker import Faker
-from decimal import Decimal
-from supabase_py import create_client
 from datetime import datetime
+from decimal import Decimal
+
+from faker import Faker
+from supabase_py import create_client
 
 # Connect to Supabase
 supabase_url = ""
