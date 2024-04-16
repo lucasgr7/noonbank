@@ -21,7 +21,7 @@
     "echarts": "^5.4.3",
     "element-plus": "^2.3.9",
     "lodash": "^4.17.21",
-    "vue": "^3.3.4",
+    "vue": "^3.4.21",
     "vue-echarts": "^6.6.1"
   },
   "devDependencies": {
