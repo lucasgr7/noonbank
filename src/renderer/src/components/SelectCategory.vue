@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { Category } from '../composables/useCategories';
 import _ from 'lodash';
 
@@ -12,9 +12,22 @@ const props = defineProps({
     default: [],
     required: true
   },
+  reset: {
+    type: Boolean,
+    default: false
+  }
 })
 
-function computedCss(form: any) {
+watch(
+  () => props.reset,
+  (value) => {
+    if (value) {
+      item.value = null;
+    }
+  },
+);
+
+function computedCss(form: Category) {
   return {
     color: form.color_font,
     backgroundColor: form.background_color,
@@ -29,7 +42,7 @@ function handleCategoryChange(form: unknown) {
 
 </script>
 <template>
-<el-select placeholder="Select Category"
+<el-select placeholder="Categoria"
     v-model="item" @change="handleCategoryChange(item)">
     <el-option v-for="category in props.categories" :key="category.id" :label="category.name" :value="category.id">
       <el-tag :style="computedCss(category)" class="tag">

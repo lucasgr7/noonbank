@@ -5,10 +5,9 @@ import SelectCategory from './SelectCategory.vue';
 import { useCategories } from '../composables/useCategories';
 import { ElNotification } from 'element-plus';
 import _ from 'lodash';
-const {categories, getCategories} = useCategories();
+const { categories, getCategories } = useCategories();
 
 const { insertAccountTransanction } = useAcountTransactions(null);
-
 
 const emits = defineEmits(['close']);
 const props = defineProps({
@@ -26,8 +25,8 @@ const CLEAN_STATE = {
   postdate: new Date(),
   detail: '',
   amount: '',
-  category_id: null
 } as unknown as AccountTransaction;
+
 watch(
   () => props.visible,
   (value) => {
@@ -35,10 +34,11 @@ watch(
   },
 );
 
-const form = reactive(CLEAN_STATE)
+const resetCategory = ref(false);
+const form = reactive<AccountTransaction>({ ...CLEAN_STATE });
 
 // actions
-function handleCategoryChange(categoryId: number){
+function handleCategoryChange(categoryId: number) {
   form.category_id = categoryId;
 }
 
@@ -48,11 +48,12 @@ function handleClean() {
   form.detail = CLEAN_STATE.detail;
   form.postdate = CLEAN_STATE.postdate;
   form.title = CLEAN_STATE.title;
+  resetCategory.value = true;
 }
 
 const save = () => {
   // format date to yyyy-mm-dd
-  if(form.postdate == null){
+  if (form.postdate == null) {
     ElNotification({
       title: 'Error',
       message: 'Please select a date',
@@ -61,10 +62,10 @@ const save = () => {
     return;
   }
   // check if postdate is a Date
-  if(_.isDate(form.postdate)){
+  if (_.isDate(form.postdate)) {
     form.postdate = form.postdate.toISOString().split('T')[0];
   }
-  if(_.isEmpty(form.postdate)){
+  if (_.isEmpty(form.postdate)) {
     ElNotification({
       title: 'Error',
       message: 'Please select a date',
@@ -73,7 +74,7 @@ const save = () => {
     return;
   }
   const response = insertAccountTransanction(form);
-  if(response){
+  if (response) {
     ElNotification({
       title: 'Success',
       message: 'Account transaction created',
@@ -82,7 +83,7 @@ const save = () => {
     emits('close');
     handleClean();
 
-  }else{
+  } else {
     ElNotification({
       title: 'Error',
       message: 'Error creating account transaction',
@@ -95,50 +96,78 @@ onMounted(() => {
   getCategories();
 })
 </script>
+
 <template>
-<el-dialog :draggable="true" id="formCreateAccountTransaction" v-model="isVisible"
-  @close="emits('close')">
-  <el-form>
-    <el-row justify="start">
-      <el-col :span="7">
-        <el-form-item label="Data">
-          <el-date-picker v-model="form.postdate" type="date" placeholder="Selecione a data">
+  <el-dialog :draggable="true" id="formCreateAccountTransaction" v-model="isVisible" title="Movimentação de Caixa"
+    class="transaction-form" @close="emits('close')">
+    <el-form>
+      <el-row>
+        Data
+      </el-row>
+      <el-row>
+        <el-form-item class="full-width">
+          <el-date-picker v-model="form.postdate" type="date" placeholder="Selecione a data" 
+            format="DD/MM/YYYY" style="width: 100%;">
           </el-date-picker>
         </el-form-item>
-      </el-col>
-      <el-col :span="14" :offset="1">
-        <el-form-item label="Descrição">
+      </el-row>
+      <el-row>
+        Descrição
+      </el-row>
+      <el-row>
+        <el-form-item class="full-width">
           <el-input v-model="form.detail" placeholder="Descrição"></el-input>
         </el-form-item>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="8">
-        <el-form-item label="Título">
-          <el-select v-model="form.title">
-            <el-option value="Transferência recebida">Transferência recebida</el-option>
-            <el-option value="Transferência enviada">Transferência enviada</el-option>
-            <el-option value="Pagamento efetuado">Pagamento efetuado</el-option>
+      </el-row>
+      <el-row>
+        Entrada ou Saída
+      </el-row>
+      <el-row>
+        <el-form-item class="full-width">
+          <el-select v-model="form.title" class="full-width" placeholder="Selecione">
+            <el-option label="Entrada" value="Transferência recebida"></el-option>
+            <el-option label="Saída" value="Transferência enviada"></el-option>
           </el-select>
         </el-form-item>
-      </el-col>
-      <el-col :span="8" >
-        <el-form-item label="Categoria">
-          <SelectCategory :categories="categories" @change="handleCategoryChange" />
+      </el-row>
+      <el-row>
+        Categoria
+      </el-row>
+      <el-row>
+        <el-form-item class="full-width">
+          <SelectCategory :categories="categories" @change="handleCategoryChange" :reset="resetCategory" class="full-width"/>
         </el-form-item>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="8" >
-        <el-form-item label="Preço">
-          <el-input type="number" v-model="form.amount" placeholder="Preço"></el-input>
+      </el-row>
+      <el-row>
+        Preço
+      </el-row>
+      <el-row>
+        <el-form-item class="full-width">
+          <el-input type="number" v-model="form.amount" placeholder="R$"></el-input>
         </el-form-item>
-      </el-col>
-    </el-row>
-  </el-form>
-  <template #footer>
-    <el-button @click="handleClean">Limpar</el-button>
-    <el-button type="primary" @click="save">Salvar</el-button>
-  </template>
-</el-dialog>
+      </el-row>
+    </el-form>
+    <template #footer>
+      <el-row :gutter="6">
+        <el-col :span="12">
+          <el-button class="full-width" @click="handleClean">Limpar</el-button>
+        </el-col>
+        <el-col :span="12">
+          <el-button class="full-width" type="primary" @click="save">Salvar</el-button>
+        </el-col>
+      </el-row>
+    </template>
+  </el-dialog>
 </template>
+
+<style>
+.transaction-form {
+  font-weight: 600;
+  text-align: center;
+  max-width: 450px;
+}
+
+.full-width {
+  width: 100%;
+}
+</style>

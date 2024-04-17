@@ -27,5 +27,11 @@
     cursor: pointer;
   }
 
+  .el-button--primary:hover,
+  .el-button--primary:focus {
+    background-color: #158860 !important;
+    border-color: #158860 !important;
+  }
+
   --el-color-primary: #159c6d !important;
 }
