@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, unref, ref, watch } from 'vue';
 import { AccountTransaction, useAcountTransactions } from '../composables/useAcountTransactions';
 import SelectCategory from './SelectCategory.vue';
 import { useCategories } from '../composables/useCategories';
@@ -20,11 +20,15 @@ const props = defineProps({
 const isVisible = ref(false);
 const CLEAN_STATE = {
   id: '',
-  footer: '',
-  title: '',
   postdate: new Date(),
+  title: '',
   detail: '',
   amount: '',
+  method_payment: '',
+  impact: '',
+  recurrent: false,
+  comments: '',
+  footer: '',
 } as unknown as AccountTransaction;
 
 watch(
@@ -35,25 +39,29 @@ watch(
 );
 
 const resetCategory = ref(false);
-const form = reactive<AccountTransaction>({ ...CLEAN_STATE });
+const form = ref({...CLEAN_STATE});
 
 // actions
 function handleCategoryChange(categoryId: number) {
-  form.category_id = categoryId;
+  form.value.category_id = categoryId;
 }
 
 function handleClean() {
-  form.amount = CLEAN_STATE.amount;
-  form.category_id = CLEAN_STATE.category_id;
-  form.detail = CLEAN_STATE.detail;
-  form.postdate = CLEAN_STATE.postdate;
-  form.title = CLEAN_STATE.title;
+  form.value.detail = CLEAN_STATE.detail;
+  form.value.amount = CLEAN_STATE.amount;
+  form.value.title = CLEAN_STATE.title;
+  form.value.postdate = CLEAN_STATE.postdate;
+  form.value.category_id = CLEAN_STATE.category_id;
+  form.value.method_payment = CLEAN_STATE.method_payment;
+  form.value.impact = CLEAN_STATE.impact;
+  form.value.recurrent = CLEAN_STATE.recurrent;
+  form.value.comments = CLEAN_STATE.comments;
   resetCategory.value = true;
 }
 
-const save = () => {
+const save =  async () => {
   // format date to yyyy-mm-dd
-  if (form.postdate == null) {
+  if (form.value.postdate == null) {
     ElNotification({
       title: 'Error',
       message: 'Please select a date',
@@ -62,10 +70,10 @@ const save = () => {
     return;
   }
   // check if postdate is a Date
-  if (_.isDate(form.postdate)) {
-    form.postdate = form.postdate.toISOString().split('T')[0];
+  if (_.isDate(form.value.postdate)) {
+    form.value.postdate = form.value.postdate.toISOString().split('T')[0];
   }
-  if (_.isEmpty(form.postdate)) {
+  if (_.isEmpty(form.value.postdate)) {
     ElNotification({
       title: 'Error',
       message: 'Please select a date',
@@ -73,8 +81,8 @@ const save = () => {
     });
     return;
   }
-  const response = insertAccountTransanction(form);
-  if (response) {
+  const response = await insertAccountTransanction(unref(form));
+  if (response.status === 201) {
     ElNotification({
       title: 'Success',
       message: 'Account transaction created',
@@ -101,14 +109,40 @@ onMounted(() => {
   <el-dialog :draggable="true" id="formCreateAccountTransaction" v-model="isVisible" title="Movimentação de Caixa"
     class="transaction-form" @close="emits('close')">
     <el-form>
+      <el-row :gutter="5">
+        <el-col :span="12">
+          <el-row>
+            Data
+          </el-row>
+          <el-row>
+            <el-form-item class="full-width">
+              <el-date-picker v-model="form.postdate" type="date" placeholder="Selecione a data" format="DD/MM/YYYY"
+                style="width: 100%;">
+              </el-date-picker>
+            </el-form-item>
+          </el-row>
+        </el-col>
+        <el-col :span="12">
+          <el-row>
+            Entrada ou Saída
+          </el-row>
+          <el-row>
+            <el-form-item class="full-width">
+              <el-select v-model="form.title" class="full-width" placeholder="Selecione">
+                <el-option label="Entrada" value="Transferência recebida"></el-option>
+                <el-option label="Saída" value="Transferência enviada"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-row>
+        </el-col>
+      </el-row>
       <el-row>
-        Data
+        Categoria
       </el-row>
       <el-row>
         <el-form-item class="full-width">
-          <el-date-picker v-model="form.postdate" type="date" placeholder="Selecione a data" 
-            format="DD/MM/YYYY" style="width: 100%;">
-          </el-date-picker>
+          <SelectCategory :categories="categories" @change="handleCategoryChange" :reset="resetCategory" 
+          @resetDone="resetCategory = false" class="full-width" />
         </el-form-item>
       </el-row>
       <el-row>
@@ -119,31 +153,67 @@ onMounted(() => {
           <el-input v-model="form.detail" placeholder="Descrição"></el-input>
         </el-form-item>
       </el-row>
+      <el-row :gutter="5">
+        <el-col :span="12">
+          <el-row>
+            Preço
+          </el-row>
+          <el-row>
+            <el-form-item class="full-width">
+              <el-input type="number" v-model="form.amount" placeholder="R$"></el-input>
+            </el-form-item>
+          </el-row>
+        </el-col>
+        <el-col :span="12">
+          <el-row>
+            Método de pagamento
+          </el-row>
+          <el-row>
+            <el-form-item>
+              <el-select v-model="form.method_payment" placeholder="Selecione">
+                <el-option label="Débito" value="debito"></el-option>
+                <el-option label="PIX" value="pix"></el-option>
+                <el-option label="Boleto" value="boleto"></el-option>
+                <el-option label="Saque" value="saque"></el-option>
+                <el-option label="TED/DOC" value="ted/doc"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-row>
+        </el-col>
+      </el-row>
+      <el-row :gutter="5">
+        <el-col :span="20">
+          <el-row>
+            Impacto
+          </el-row>
+          <el-row>
+            <el-form-item class="full-width">
+              <el-select v-model="form.impact" placeholder="Selecione" class="full-width">
+                <el-option label="Essencial" value="Essencial"></el-option>
+                <el-option label="Não Essencial" value="Não Essencial"></el-option>
+                <el-option label="Investimento" value="Investimento"></el-option>
+                <el-option label="Luxo" value="Luxo"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-row>
+        </el-col>
+        <el-col :span="2">
+          <el-row>
+            Recorrente?
+          </el-row>
+          <el-row>
+            <el-form-item>
+              <el-checkbox v-model="form.recurrent"></el-checkbox>
+            </el-form-item>
+          </el-row>
+        </el-col>
+      </el-row>
       <el-row>
-        Entrada ou Saída
+        Comentários
       </el-row>
       <el-row>
         <el-form-item class="full-width">
-          <el-select v-model="form.title" class="full-width" placeholder="Selecione">
-            <el-option label="Entrada" value="Transferência recebida"></el-option>
-            <el-option label="Saída" value="Transferência enviada"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-row>
-      <el-row>
-        Categoria
-      </el-row>
-      <el-row>
-        <el-form-item class="full-width">
-          <SelectCategory :categories="categories" @change="handleCategoryChange" :reset="resetCategory" class="full-width"/>
-        </el-form-item>
-      </el-row>
-      <el-row>
-        Preço
-      </el-row>
-      <el-row>
-        <el-form-item class="full-width">
-          <el-input type="number" v-model="form.amount" placeholder="R$"></el-input>
+          <el-input v-model="form.comments" placeholder="Comentários"></el-input>
         </el-form-item>
       </el-row>
     </el-form>
