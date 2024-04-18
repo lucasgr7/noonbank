@@ -74,7 +74,6 @@ const save =  async () => {
     });
     return;
   }
-  debugger;
   const response = await insertAccountTransanction(unref(form));
   if (response.status === 201) {
     ElNotification({

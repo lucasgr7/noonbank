@@ -1,4 +1,4 @@
-import { Ref, ref, watch } from "vue";
+import { Ref, ref, toRaw, watch } from "vue";
 import { supabase } from "./supabase";
 import { TypeMergeData } from "./useMergeTransaction";
 import { generateGuid } from "../helper";
@@ -56,10 +56,9 @@ export const useAcountTransactions = (dates?: Ref<{startDate: Date, endDate: Dat
     // generate guid
     data.id = generateGuid();
     data.kind = 'DELETE';
-
-    return await supabase
+    return supabase
       .from(table)
-      .insert(data);
+      .insert(toRaw(data));
        
   }
 

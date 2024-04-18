@@ -1,0 +1,11 @@
+ALTER TABLE account_transactions
+ADD COLUMN recurrent BOOLEAN DEFAULT FALSE,
+ADD COLUMN method_payment VARCHAR(255),
+ADD COLUMN impact VARCHAR(255),
+ADD COLUMN comments TEXT;
+
+ALTER TABLE transactions
+ADD COLUMN recurrent BOOLEAN DEFAULT FALSE,
+ADD COLUMN method_payment VARCHAR(255),
+ADD COLUMN impact VARCHAR(255),
+ADD COLUMN comments TEXT;
