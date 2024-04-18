@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, unref, ref, watch, toRaw } from 'vue';
 import { AccountTransaction, useAcountTransactions } from '../composables/useAcountTransactions';
 import SelectCategory from './SelectCategory.vue';
 import { useCategories } from '../composables/useCategories';
@@ -35,25 +35,26 @@ watch(
 );
 
 const resetCategory = ref(false);
-const form = reactive<AccountTransaction>({ ...CLEAN_STATE });
+const form = ref({...CLEAN_STATE});
 
 // actions
 function handleCategoryChange(categoryId: number) {
-  form.category_id = categoryId;
+  form.value.category_id = categoryId;
 }
 
 function handleClean() {
-  form.amount = CLEAN_STATE.amount;
-  form.category_id = CLEAN_STATE.category_id;
-  form.detail = CLEAN_STATE.detail;
-  form.postdate = CLEAN_STATE.postdate;
-  form.title = CLEAN_STATE.title;
+  // set form to be CLEAN_STATE
+  form.value.detail = CLEAN_STATE.detail;
+  form.value.amount = CLEAN_STATE.amount;
+  form.value.title = CLEAN_STATE.title;
+  form.value.postdate = CLEAN_STATE.postdate;
+  form.value.category_id = CLEAN_STATE.category_id;
   resetCategory.value = true;
 }
 
-const save = () => {
+const save =  async () => {
   // format date to yyyy-mm-dd
-  if (form.postdate == null) {
+  if (form.value.postdate == null) {
     ElNotification({
       title: 'Error',
       message: 'Please select a date',
@@ -62,10 +63,10 @@ const save = () => {
     return;
   }
   // check if postdate is a Date
-  if (_.isDate(form.postdate)) {
-    form.postdate = form.postdate.toISOString().split('T')[0];
+  if (_.isDate(form.value.postdate)) {
+    form.value.postdate = form.value.postdate.toISOString().split('T')[0];
   }
-  if (_.isEmpty(form.postdate)) {
+  if (_.isEmpty(form.value.postdate)) {
     ElNotification({
       title: 'Error',
       message: 'Please select a date',
@@ -73,8 +74,9 @@ const save = () => {
     });
     return;
   }
-  const response = insertAccountTransanction(form);
-  if (response) {
+  debugger;
+  const response = await insertAccountTransanction(unref(form));
+  if (response.status === 201) {
     ElNotification({
       title: 'Success',
       message: 'Account transaction created',
