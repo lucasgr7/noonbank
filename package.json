@@ -19,7 +19,7 @@
     "@supabase/supabase-js": "^2.41.1",
     "dotenv": "^16.3.1",
     "echarts": "^5.5.0",
-    "element-plus": "^2.3.9",
+    "element-plus": "^2.6.3",
     "lodash": "^4.17.21",
     "vue": "^3.3.4",
     "vue-echarts": "^6.6.1"
