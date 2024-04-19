@@ -20,8 +20,11 @@ export interface Transaction {
   detailsChargesAmount: number | null; // NUMERIC(10, 5)
   detailsFxAmountUsd: boolean | null;
   category_id: number | null;
+  recurrent: boolean | null;
+  method_payment: string | null;
+  impact: string | null;
+  comments: string | null;
 }
-
 
 export const useCreditCardTransactions = (dates: Ref<{startDate: Date, endDate: Date}>) => {
   const transactions = ref([] as Transaction[]);

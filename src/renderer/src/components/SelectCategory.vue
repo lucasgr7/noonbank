@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 const item = ref();
 
-const emits = defineEmits(['change']);
+const emits = defineEmits(['change', 'resetDone']);
 const props = defineProps({
   categories: {
     type: Array<Category>,
@@ -23,6 +23,7 @@ watch(
   (value) => {
     if (value) {
       item.value = null;
+      emits('resetDone');
     }
   },
 );

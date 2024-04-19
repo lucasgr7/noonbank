@@ -15,8 +15,11 @@ export interface AccountTransaction {
   strikethrough: boolean | null;
   showclock: boolean | null;
   category_id: number | null;
+  recurrent: boolean | null;
+  method_payment: string | null;
+  impact: string | null;
+  comments: string | null;
 }
-
 
 export const useAcountTransactions = (dates?: Ref<{startDate: Date, endDate: Date}>, filter: any = null) => {
   const accTransactions = ref([] as AccountTransaction[]);
