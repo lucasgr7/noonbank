@@ -54,7 +54,10 @@ export const useCreditCardTransactions = (dates: Ref<{startDate: Date, endDate: 
   async function updateCreditCardCategory(data: TypeMergeData){
     return await supabase
       .from("transactions")
-      .update({ category_id: data.categoryId })
+      .update({ 
+        category_id: data.categoryId,
+        description: data.description,
+       })
       .eq("id", data.id);
   }
 

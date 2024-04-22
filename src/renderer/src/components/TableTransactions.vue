@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-
-import { onMounted } from 'vue';
+import EditTransactionDialog from './EditTransactionDialog.vue';
+import { onMounted, ref } from 'vue';
 import { usePeriod } from '../composables/period';
 import { TypeMergeData, useMergeTransaction } from '../composables/useMergeTransaction';
 import { moneyFormatter, timeFormatter } from '../helper';
@@ -15,26 +15,27 @@ import SelectCategory from './SelectCategory.vue';
 
 const { dates } = usePeriod();
 const { mergeData,
-   updateAccountCategory, 
-   updateCreditCardCategory,
-   search } = useMergeTransaction(dates);
+  updateAccountCategory,
+  updateCreditCardCategory,
+  search } = useMergeTransaction(dates);
 const { getCategories, categories } = useCategories();
 
-const { columnSort, 
+const { columnSort,
   handleSizeChange,
   handleCurrentChange,
-  currentPage, 
-  pageSize, 
+  currentPage,
+  pageSize,
   totalCost,
   totalGain,
   totalNumerOfLines,
   chunckedData } = useTable(mergeData, 'description', true);
+  
+const isEditDialogVisible = ref(false);
+const selectedRowData = ref({} as TypeMergeData);
 
-
-
-function handleChangePrimaryCateogry(selectedCateogry: number, row: TypeMergeData) {
+function handleChangePrimaryCateogry(selectedCategory: number, row: TypeMergeData) {
   // validate primaryCategory with notification
-  if (!selectedCateogry) {
+  if (!selectedCategory) {
     ElNotification({
       title: 'Error',
       message: 'Please select a category',
@@ -42,16 +43,16 @@ function handleChangePrimaryCateogry(selectedCateogry: number, row: TypeMergeDat
     });
   }
 
-  row.categoryId= selectedCateogry;
-  try{
+  row.categoryId = selectedCategory;
+  try {
     if (row.type === 'credit') {
       updateCreditCardCategory(row);
     } else {
       updateAccountCategory(row);
     }
   }
-  catch(error: unknown){
-    if(_.isError(error))
+  catch (error: unknown) {
+    if (_.isError(error))
       ElNotification({
         title: 'Error',
         message: error.message,
@@ -60,37 +61,81 @@ function handleChangePrimaryCateogry(selectedCateogry: number, row: TypeMergeDat
   }
 }
 
-function handleSearch(query: string){
+function handleSearch(query: string) {
   search(query);
 }
 
-function handleClearCategory(row: TypeMergeData){
+function handleClearCategory(row: TypeMergeData) {
   row.categoryId = null;
 }
 
 onMounted(() => {
   getCategories();
 })
+
+//FOR EDIT DIALOG
+function editTransaction(row: TypeMergeData) {
+  selectedRowData.value = row;
+  isEditDialogVisible.value = true;
+}
+
+async function updateTransaction(form: TypeMergeData) {
+  try {
+    if (form.type === 'credit') {
+      selectedRowData.value.categoryId = form.categoryId;
+      selectedRowData.value.description = form.description;
+      await updateCreditCardCategory(form);
+    } else {
+      selectedRowData.value.categoryId = form.categoryId;
+      selectedRowData.value.description = form.description;
+      selectedRowData.value.amount = form.amount;
+      await updateAccountCategory(form);
+    }
+  }
+  catch (error: unknown) {
+    if (_.isError(error))
+      ElNotification({
+        title: 'Error',
+        message: error.message,
+        type: 'error'
+      });
+      isEditDialogVisible.value = false;
+      return;
+    }
+    
+    ElNotification({
+      title: 'Success',
+      message: 'Transação Alterada com Sucesso!',
+      type: 'success'
+    });
+
+    isEditDialogVisible.value = false;
+    search('');
+}
+
 </script>
 <template>
-  <Tableheader title="Trançasões" @search="handleSearch" />
-  <el-table id="table-transactions" @sort-change="columnSort" :data="chunckedData" style="width: 100%">
-    <el-table-column sortable prop="signal" label="Tipo" :width="50"></el-table-column>
-    <el-table-column sortable prop="description" label="Description" :width="300"></el-table-column>
-    <el-table-column sortable prop="amount" :formatter="moneyFormatter" :width="100" label="Amount"></el-table-column>
-    <el-table-column sortable prop="categoryId" label="Category" :width="130">
+  <Tableheader title="Transações" @search="handleSearch" />
+  <el-table id="table-transactions" @sort-change="columnSort" @row-click="editTransaction" :data="chunckedData"
+    style="width: 100%" class="table">
+    <el-table-column sortable prop="signal" label="Tipo" :width="70"></el-table-column>
+    <el-table-column sortable prop="description" label="Descrição" :width="300"></el-table-column>
+    <el-table-column sortable prop="amount" :formatter="moneyFormatter" :width="100" label="Montante"></el-table-column>
+    <el-table-column sortable prop="categoryId" label="Categoria" :width="130">
       <template #default="scope">
-        <SelectCategory  
-          v-if="!scope.row.categoryId && scope.row.typeValue !== 'plus'"
-          :categories="categories"
+        <SelectCategory v-if="!scope.row.categoryId && scope.row.typeValue !== 'plus'" :categories="categories"
           @change="(evt) => handleChangePrimaryCateogry(evt, scope.row)" />
         <span v-else>
-          <CategoryTag v-if="scope.row.categoryId && (categories?.length ?? 0) > 0" :categories="categories" @click="handleClearCategory(scope.row)" :id="scope.row.categoryId" />
+          <CategoryTag v-if="scope.row.categoryId && (categories?.length ?? 0) > 0" :categories="categories"
+            @click="handleClearCategory(scope.row)" :id="scope.row.categoryId" />
         </span>
       </template>
     </el-table-column>
-    <el-table-column sortable prop="time" label="Time" :formatter="timeFormatter"></el-table-column>
+    <el-table-column sortable prop="time" label="Data" :formatter="timeFormatter"></el-table-column>
   </el-table>
+  <EditTransactionDialog v-model="isEditDialogVisible" :form="selectedRowData" title="Editar Transação"
+    :isEditDialog="true" :isCreditTransaction="selectedRowData.type === 'credit'"
+    @save="updateTransaction(selectedRowData)" @close-dialog="isEditDialogVisible = false" />
   <el-row>
     <el-col>
       Total gasto: {{ totalCost.toLocaleString('currency') }}
@@ -99,12 +144,8 @@ onMounted(() => {
       Total ganho: {{ totalGain.toLocaleString('currency') }}
     </el-col>
   </el-row>
-  <TableFooter 
-    @current-change="handleCurrentChange" 
-    @size-change="handleSizeChange" 
-    :total="totalNumerOfLines"
-    :page-size="pageSize" 
-    :current-page="currentPage" />
+  <TableFooter @current-change="handleCurrentChange" @size-change="handleSizeChange" :total="totalNumerOfLines"
+    :page-size="pageSize" :current-page="currentPage" />
 
 </template>
 <style lang="scss">
@@ -117,28 +158,36 @@ onMounted(() => {
   -webkit-backdrop-filter: blur(9.2px);
   border: 1px solid rgba(111, 224, 255, 0.37);
 }
-  .paginator{
-    margin-top: 8px;
-    button {
-        // round
-        border-radius: 50% !important;
-        // size
-        width: 30px;
-        height: 30px;
-        margin-right: 4px;
-    }
-    ul.el-pager{
-      height: 8vh;
-      li {
-        // round
-        border-radius: 50% !important;
-        // size
-        width: 30px;
-        height: 30px;
-        margin-right: 4px;
-        // dropshadow
-        box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.1);
-      }
+
+.table:hover {
+  cursor: pointer;
+}
+
+.paginator {
+  margin-top: 8px;
+
+  button {
+    // round
+    border-radius: 50% !important;
+    // size
+    width: 30px;
+    height: 30px;
+    margin-right: 4px;
+  }
+
+  ul.el-pager {
+    height: 8vh;
+
+    li {
+      // round
+      border-radius: 50% !important;
+      // size
+      width: 30px;
+      height: 30px;
+      margin-right: 4px;
+      // dropshadow
+      box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.1);
     }
   }
+}
 </style>
