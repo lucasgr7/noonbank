@@ -51,7 +51,11 @@ export const useAcountTransactions = (dates?: Ref<{startDate: Date, endDate: Dat
     const table = "account_transactions";
     return await supabase
       .from(table)
-      .update({ category_id: data.categoryId })
+      .update({ 
+        category_id: data.categoryId,
+        amount: data.amount,
+        detail: data.description,
+       })
       .match({ id: data.id });
   }
   async function insertAccountTransanction(data: AccountTransaction){

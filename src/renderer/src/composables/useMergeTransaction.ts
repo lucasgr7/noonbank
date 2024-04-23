@@ -40,7 +40,7 @@ export function useMergeTransaction(dates: Ref<{startDate: Date, endDate: Date}>
       return {
         signal: checkType(x.title),
         typeValue: checkTypeValue(x.title),
-        description:  x.title + ' ' + x.detail,
+        description:  `${x.title} - ${x.detail}`,
         amount: convertToNumber(x.amount),
         category: x.kind,
         time: normalizeDate(x.postdate), // assuming this is in the '2023-08-01' format
@@ -54,7 +54,7 @@ export function useMergeTransaction(dates: Ref<{startDate: Date, endDate: Date}>
         // type: emoji red
         signal: '🔴',
         typeValue: 'minus',
-        description: x.title + ' ' + x.description,
+        description: x.description,
         amount: convertToNumber(x.amount),
         category: x.category,
         time: normalizeDate(x.time), // assuming this can be in the '13/08/2023, 00:56:35' format
