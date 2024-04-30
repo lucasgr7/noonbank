@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { Ref, computed, onMounted, unref } from 'vue';
+import { Ref, computed, onMounted, ref, unref } from 'vue';
 import { useRecurrentBills } from '../composables/useRecurrentBills';
 import { usePeriod } from '../composables/period';
 import { useMergeTransaction } from '../composables/useMergeTransaction';
 import { snapshot_recurrnt_bills, useSnapshotRecurrentBills } from '../composables/useSnapshotRecurrentBills';
 import _ from 'lodash';
+import FormRecurrentBills from './FormRecurrentBills.vue';
 
 const { insertRecord } = useSnapshotRecurrentBills();
 
@@ -12,6 +13,8 @@ const { dates, previousMonthDates } = usePeriod();
 const { records, getRecords } = useRecurrentBills();
 const { mergeData } = useMergeTransaction(dates);
 const { mergeData: previousMergeData } = useMergeTransaction(previousMonthDates);
+const isDialogVisible = ref(false);
+const selectedRow = ref({} as recurrentBillView);
 
 interface recurrentBillView {
   label: string;
@@ -86,6 +89,11 @@ function takeSnapshot(){
   }
 }
 
+function handleRowClick(row: recurrentBillView){
+  isDialogVisible.value = true;
+  selectedRow.value = row;
+}
+
 onMounted(() => {
   getRecords();
 })
@@ -101,7 +109,7 @@ onMounted(() => {
     <div class="total-amount">
       R$ {{ totalAmount.toLocaleString('pt-br', { minimumFractionDigits: 2 }) }}
     </div>
-    <el-table :data="recurrentBills" class="table-recurrent-bills">
+    <el-table :data="recurrentBills" class="table-recurrent-bills" @row-click="handleRowClick">
       <el-table-column prop="label" label="Descrição" width="90">
         <template #default="{ row }">
           <b :class="row.paid ? 'color-dark' : 'color-light'">{{ row.label }}</b>
@@ -121,6 +129,7 @@ onMounted(() => {
       </el-table-column>
     </el-table>
   </el-card>
+  <FormRecurrentBills :visible="isDialogVisible" :data="selectedRow" @close="isDialogVisible = false" />
 </template>
 <style lang="scss">
 #recurrent-debts {
