@@ -31,7 +31,9 @@ const { columnSort,
   chunckedData } = useTable(mergeData, 'description', true);
   
 const isEditDialogVisible = ref(false);
-const selectedRowData = ref({} as TypeMergeData);
+const selectedRowData = ref({
+  recurrent: false
+} as TypeMergeData);
 
 function handleChangePrimaryCateogry(selectedCategory: number, row: TypeMergeData) {
   // validate primaryCategory with notification
@@ -84,11 +86,18 @@ async function updateTransaction(form: TypeMergeData) {
     if (form.type === 'credit') {
       selectedRowData.value.categoryId = form.categoryId;
       selectedRowData.value.description = form.description;
+      selectedRowData.value.impact = form.impact;
+      selectedRowData.value.recurrent = form.recurrent;
+      selectedRowData.value.comments = form.comments;
       await updateCreditCardCategory(form);
     } else {
       selectedRowData.value.categoryId = form.categoryId;
       selectedRowData.value.description = form.description;
       selectedRowData.value.amount = form.amount;
+      selectedRowData.value.method_payment = form.method_payment;
+      selectedRowData.value.impact = form.impact;
+      selectedRowData.value.recurrent = form.recurrent;
+      selectedRowData.value.comments = form.comments;
       await updateAccountCategory(form);
     }
   }

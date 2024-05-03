@@ -53,8 +53,12 @@ export const useAcountTransactions = (dates?: Ref<{startDate: Date, endDate: Dat
       .from(table)
       .update({ 
         category_id: data.categoryId,
-        amount: data.amount,
         detail: data.description,
+        amount: data.amount,
+        method_payment: data.method_payment,
+        impact: data.impact,
+        recurrent: data.recurrent,
+        comments: data.comments,
        })
       .match({ id: data.id });
   }

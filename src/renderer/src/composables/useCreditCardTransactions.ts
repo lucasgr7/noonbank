@@ -57,6 +57,9 @@ export const useCreditCardTransactions = (dates: Ref<{startDate: Date, endDate: 
       .update({ 
         category_id: data.categoryId,
         description: data.description,
+        impact: data.impact,
+        recurrent: data.recurrent,
+        comments: data.comments,
        })
       .eq("id", data.id);
   }

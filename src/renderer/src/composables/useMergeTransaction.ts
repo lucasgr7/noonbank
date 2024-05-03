@@ -13,6 +13,10 @@ export interface TypeMergeData {
   type: 'credit' | 'account';
   id: string;
   categoryId?: number | null;
+  impact?: string;
+  recurrent?: boolean;
+  comments?: string;
+  method_payment?: string;
 }
 
 export function useMergeTransaction(dates: Ref<{startDate: Date, endDate: Date}>){
@@ -46,7 +50,11 @@ export function useMergeTransaction(dates: Ref<{startDate: Date, endDate: Date}>
         time: normalizeDate(x.postdate), // assuming this is in the '2023-08-01' format
         type: 'account',
         id: x.id,
-        categoryId: x.category_id
+        categoryId: x.category_id,
+        impact: x.impact,
+        recurrent: x.recurrent,
+        comments: x.comments,
+        method_payment: x.method_payment
       }
     });
     const credit = transactions.value.map((x: Transaction) => {
@@ -60,7 +68,10 @@ export function useMergeTransaction(dates: Ref<{startDate: Date, endDate: Date}>
         time: normalizeDate(x.time), // assuming this can be in the '13/08/2023, 00:56:35' format
         type: 'credit',
         id: x.id,
-        categoryId: x.category_id
+        categoryId: x.category_id,
+        impact: x.impact,
+        recurrent: x.recurrent,
+        comments: x.comments,
       }
     });
 
