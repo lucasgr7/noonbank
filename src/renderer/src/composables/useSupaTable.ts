@@ -109,6 +109,11 @@ export function useSupaTable<T>(tableName: string, columns: TableColumns) {
     }
   }
 
+  //Random id
+  function createId() {
+    return Math.floor(Math.random() * 9000) + 1000;
+  }
+
   return {
     records,
     error,
@@ -117,6 +122,7 @@ export function useSupaTable<T>(tableName: string, columns: TableColumns) {
     updateRecord,
     deleteRecord,
     getRecordById,
-    search
+    search,
+    createId
   };
 }
