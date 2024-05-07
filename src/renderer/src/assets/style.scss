@@ -34,4 +34,11 @@
   }
 
   --el-color-primary: #159c6d !important;
+
+  .el-button[disabled] {
+    color: #fff !important;
+    background-color: #bdbcbc !important;
+    border-color: #c0c0c0 !important;
+    opacity: 0.5;
+  }
 }
