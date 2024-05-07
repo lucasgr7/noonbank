@@ -1,16 +1,17 @@
 <script lang="ts" setup>
-import { Ref, computed, onMounted, ref, unref } from 'vue';
+import { Ref, computed, onMounted, ref, unref, watch } from 'vue';
 import { useRecurrentBills } from '../composables/useRecurrentBills';
 import { usePeriod } from '../composables/period';
 import { useMergeTransaction } from '../composables/useMergeTransaction';
 import { snapshot_recurrnt_bills, useSnapshotRecurrentBills } from '../composables/useSnapshotRecurrentBills';
-import _ from 'lodash';
 import FormRecurrentBills from './FormRecurrentBills.vue';
+import { ElNotification } from 'element-plus';
+import _ from 'lodash';
 
 const { insertRecord } = useSnapshotRecurrentBills();
 
 const { dates, previousMonthDates } = usePeriod();
-const { records, getRecords } = useRecurrentBills();
+const { records, getRecords, deleteRecord, updateRecord } = useRecurrentBills();
 const { mergeData } = useMergeTransaction(dates);
 const { mergeData: previousMergeData } = useMergeTransaction(previousMonthDates);
 const isDialogVisible = ref(false);
@@ -21,11 +22,12 @@ interface recurrentBillView {
   value: number;
   paid: boolean;
   id: number;
+  key: string;
 }
 
 const recurrentBills = computed(() => {
   if (!records.value || !previousMergeData) return [];
-  
+
   const calcSum = (data: Ref | any, keys: string[]) => {
     // validate if data has value or not
     data = unref(data);
@@ -38,7 +40,7 @@ const recurrentBills = computed(() => {
       return acc;
     }, 0);
   };
-  
+
   const result: recurrentBillView[] = records.value.map(record => {
     const keys = record.key.toLocaleLowerCase().split(',');
     const currentSum = calcSum(mergeData.value, keys);
@@ -47,13 +49,14 @@ const recurrentBills = computed(() => {
     // if the currentSum is 0 then the difference is null
 
     const diff = currentSum === 0 ? null : _.round(((currentSum - previousSum) / currentSum) * 100);
-    
+
     return {
       label: record.label,
       value: currentSum,
       difference: diff,
       paid: currentSum > 0,
       id: record.id,
+      key: record.key,
     };
   });
 
@@ -73,8 +76,8 @@ const totalAmount = computed(() => {
   return recurrentBills.value.reduce((acc, item) => acc + item.value, 0);
 })
 
-function takeSnapshot(){
-  try{
+function takeSnapshot() {
+  try {
     recurrentBills.value.forEach((recurrentBill: recurrentBillView) => {
       const { value } = recurrentBill;
       const record = {
@@ -84,12 +87,12 @@ function takeSnapshot(){
       } as snapshot_recurrnt_bills;
       insertRecord(record);
     });
-  }catch(error: any){
+  } catch (error: any) {
     console.error(error);
   }
 }
 
-function handleRowClick(row: recurrentBillView){
+function handleRowClick(row: recurrentBillView) {
   isDialogVisible.value = true;
   selectedRow.value = row;
 }
@@ -97,6 +100,60 @@ function handleRowClick(row: recurrentBillView){
 onMounted(() => {
   getRecords();
 })
+
+async function handleUpdate(form: any) {
+  try {
+    const record = {
+      id: form.id,
+      label: form.label,
+      key: form.key,
+    }
+    await updateRecord(form.id, record);
+  } catch (error: any) {
+    if (_.isError(error))
+      ElNotification({
+        title: 'Error',
+        message: error.message,
+        type: 'error'
+      });
+    isDialogVisible.value = false;
+    return;
+  }
+
+  ElNotification({
+    title: 'Sucesso',
+    message: 'Conta Recorrente atualizada com sucesso',
+    type: 'success',
+  });
+
+  isDialogVisible.value = false;
+  getRecords();
+}
+
+async function handleDelete() {
+  try {
+    await deleteRecord(selectedRow.value.id);
+  } catch (error: any) {
+    if (_.isError(error))
+      ElNotification({
+        title: 'Error',
+        message: error.message,
+        type: 'error'
+      });
+    isDialogVisible.value = false;
+    return;
+  }
+
+  isDialogVisible.value = false;
+  getRecords();
+
+  ElNotification({
+    title: 'Sucesso',
+    message: 'Conta Recorrente deletada com sucesso',
+    type: 'success',
+  });
+}
+
 </script>
 <template>
   <el-card id="recurrent-debts">
@@ -122,37 +179,45 @@ onMounted(() => {
       </el-table-column>
       <el-table-column prop="paid" label="Pago" width="65">
         <template #default="{ row }">
-          <b :class="{'f-green': row.difference < 0, 'f-red': row.difference > 0, 'hidden': row.difference === 0 || row.difference == null}">
+          <b
+            :class="{ 'f-green': row.difference < 0, 'f-red': row.difference > 0, 'hidden': row.difference === 0 || row.difference == null }">
             {{ row.difference }}%
-          </b>        
+          </b>
         </template>
       </el-table-column>
     </el-table>
   </el-card>
-  <FormRecurrentBills :visible="isDialogVisible" :data="selectedRow" @close="isDialogVisible = false" />
+  <FormRecurrentBills :visible="isDialogVisible" :form="selectedRow" :isEditDialog="true"
+    title="Editar Conta Recorrente" @close="isDialogVisible = false" @saveData="handleUpdate(selectedRow)"
+    @deleteData="handleDelete" />
 </template>
 <style lang="scss">
 #recurrent-debts {
-  background: white;  
+  background: white;
   overflow-y: auto;
   font-size: 12px !important;
-  .f-green{
+
+  .f-green {
     color: #2a670c;
   }
-  .f-red{
+
+  .f-red {
     color: #c4260a;
   }
-  .hidden{
+
+  .hidden {
     visibility: hidden;
   }
 
   .el-card__body {
     padding-inline: 0px !important;
-    .el-table__cell{
+
+    .el-table__cell {
       padding: 0px !important;
       font-size: 12px !important;
+
       // text don't break line
-      b{
+      b {
         white-space: nowrap;
       }
     }
@@ -213,6 +278,10 @@ onMounted(() => {
   .table-recurrent-bills {
     margin-top: 10px;
 
+    :hover {
+      cursor: pointer;
+    }
+
     .el-table__header-wrapper {
       display: none;
     }
@@ -222,4 +291,5 @@ onMounted(() => {
       overflow-y: auto;
     }
   }
-}</style>
+}
+</style>

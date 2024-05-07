@@ -7,17 +7,29 @@ import FormCreateTag from './FormCreateTag.vue';
 import { ref } from 'vue';
 import FormCreateStock from './FormCreateStock.vue';
 import FormCreateAccountTransaction from './FormCreateAccountTransaction.vue';
+import FormRecurrentBills from './FormRecurrentBills.vue';
+import { useRecurrentBills } from '@renderer/composables/useRecurrentBills';
+import { ElNotification } from 'element-plus';
+import _ from 'lodash';
 
 const { selectedMonth } = usePeriod();
 const isFormCreateTag = ref(false);
 const isFormCreateStock = ref(false);
 const isFormCreateAccountTransaction = ref(false);
+const isFormRecurrentBills = ref(false);
 
 const props = defineProps({
   title: {
     type: String,
     default: 'Dashboard'
   }
+});
+
+const { insertRecord, createId } = useRecurrentBills();
+const form = ref({
+  id: createId(),
+  label: '',
+  key: '',
 });
 
 function showCreateStock() {
@@ -29,6 +41,9 @@ function showCreateCategory() {
 function showCreateAccountTransaction() {
   isFormCreateAccountTransaction.value = true;
 }
+function showCreateReccurentBills() {
+  isFormRecurrentBills.value = true;
+}
 function closeCategory() {
   isFormCreateTag.value = false;
 }
@@ -38,40 +53,70 @@ function closeStock() {
 function closeFormAccountTransaction(){
   isFormCreateAccountTransaction.value = false;
 }
+function closeFormRecurrentBills(){
+  isFormRecurrentBills.value = false;
+}
 function handleRefresh(){
   // electron refresh
   window.location.reload();
 }
 
+async function handleCreate(){
+  try {
+    await insertRecord(form.value);
+    ElNotification  ({
+      title: 'Sucesso',
+      message: 'Conta Recorrente criada com sucesso',
+      type: 'success',
+    });
+  } catch (error: any) {
+    if (_.isError(error))
+      ElNotification({
+        title: 'Error',
+        message: error.message,
+        type: 'error'
+      });
+  }
+
+  closeFormRecurrentBills();
+  handleRefresh();
+}
+
 </script>
 
 <template>
-  <button type="button" class="round icon" click="handleRefresh"><el-icon><Refresh /></el-icon></button>
+  <button type="button" class="round icon" @click="handleRefresh"><el-icon><Refresh /></el-icon></button>
   <FormCreateTag :visible="isFormCreateTag" @close="closeCategory" />
   <FormCreateStock :visible="isFormCreateStock" @close="closeStock" />
   <FormCreateAccountTransaction :visible="isFormCreateAccountTransaction" @close="closeFormAccountTransaction" />
+  <FormRecurrentBills :visible="isFormRecurrentBills" :form="form" title="Nova Conta Recorrente" @close="closeFormRecurrentBills" @saveData="handleCreate"/>
     <el-row class="container" align="middle">
-      <el-col :lg="8" :md="8" :sm="6" :xs="24">
+      <el-col :lg="6" :md="8" :sm="6" :xs="24">
         <h2 class="title">{{ props.title }}</h2>
       </el-col>
-      <el-col :lg="6" :md="5" :sm="5" :xs="24">
+      <el-col :lg="5" :md="5" :sm="5" :xs="24">
         <el-date-picker v-model="selectedMonth" format="MM/YYYY" type="month" placeholder="Data" style="width: 100%;"/>
       </el-col>
-      <el-col :lg="10" :md="10" :sm="10" :xs="24">
+      <el-col :offset="1" :lg="12" :md="10" :sm="10" :xs="24">
         <el-row class="icon_container" justify="center">
-          <el-col :span="6">
+          <el-col :span="5">
             <el-button :icon="Plus" type="success" @click="showCreateCategory" round>
               Categoria
             </el-button>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="5">
             <el-button :icon="Plus" type="warning" @click="showCreateStock" round>
               Novo Ativo
             </el-button>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="7">
             <el-button :icon="Plus" type="danger" @click="showCreateAccountTransaction" round>
               Nova Transação
+            </el-button>
+          </el-col>
+          <el-col :span="6">
+            <el-button :icon="Plus" type="success" @click="showCreateReccurentBills" round>
+              Conta Recorrente
             </el-button>
           </el-col>
         </el-row>
