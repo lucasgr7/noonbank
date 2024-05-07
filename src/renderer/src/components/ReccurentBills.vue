@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { Ref, computed, onMounted, ref, unref, watch } from 'vue';
+import { Ref, computed, onMounted, ref, unref } from 'vue';
 import { useRecurrentBills } from '../composables/useRecurrentBills';
 import { usePeriod } from '../composables/period';
 import { useMergeTransaction } from '../composables/useMergeTransaction';
 import { snapshot_recurrnt_bills, useSnapshotRecurrentBills } from '../composables/useSnapshotRecurrentBills';
 import FormRecurrentBills from './FormRecurrentBills.vue';
-import { ElNotification } from 'element-plus';
+import { ElMessageBox, ElNotification } from 'element-plus';
 import _ from 'lodash';
 
 const { insertRecord } = useSnapshotRecurrentBills();
@@ -108,7 +108,15 @@ async function handleUpdate(form: any) {
       label: form.label,
       key: form.key,
     }
+
     await updateRecord(form.id, record);
+
+    ElNotification({
+    title: 'Sucesso',
+    message: 'Conta Recorrente atualizada com sucesso',
+    type: 'success',
+    });
+
   } catch (error: any) {
     if (_.isError(error))
       ElNotification({
@@ -116,24 +124,26 @@ async function handleUpdate(form: any) {
         message: error.message,
         type: 'error'
       });
-    isDialogVisible.value = false;
     return;
   }
 
-  ElNotification({
-    title: 'Sucesso',
-    message: 'Conta Recorrente atualizada com sucesso',
-    type: 'success',
-  });
-
-  isDialogVisible.value = false;
   getRecords();
 }
 
 async function handleDelete() {
   try {
+
+    await ElMessageBox.confirm('Tem certeza que deseja deletar essa conta recorrente?', 'Confirmação', {
+      confirmButtonText: 'Sim',
+      cancelButtonText: 'Cancelar',
+      type: 'warning',
+    });
+
     await deleteRecord(selectedRow.value.id);
+    isDialogVisible.value = false;
   } catch (error: any) {
+    if (error === 'cancel') return;
+
     if (_.isError(error))
       ElNotification({
         title: 'Error',
@@ -144,7 +154,6 @@ async function handleDelete() {
     return;
   }
 
-  isDialogVisible.value = false;
   getRecords();
 
   ElNotification({
@@ -152,6 +161,11 @@ async function handleDelete() {
     message: 'Conta Recorrente deletada com sucesso',
     type: 'success',
   });
+}
+
+function handleClose() {
+  isDialogVisible.value = false;
+  getRecords();
 }
 
 </script>
@@ -188,7 +202,7 @@ async function handleDelete() {
     </el-table>
   </el-card>
   <FormRecurrentBills :visible="isDialogVisible" :form="selectedRow" :isEditDialog="true"
-    title="Editar Conta Recorrente" @close="isDialogVisible = false" @saveData="handleUpdate(selectedRow)"
+    title="Editar Conta Recorrente" @close="handleClose" @saveData="handleUpdate(selectedRow)"
     @deleteData="handleDelete" />
 </template>
 <style lang="scss">

@@ -23,6 +23,20 @@ const props = defineProps({
 });
 
 const isVisible = ref(false);
+const labelError = ref('');
+const keyError = ref('');
+
+function validateForm() {
+  let isValid = true;
+  if (!props.form.label) {
+    labelError.value = 'Campo obrigatório';
+    isValid = false;
+  } else if (!props.form.key) {
+    keyError.value = 'Campo obrigatório';
+    isValid = false;
+  }
+  return isValid;
+}
 
 function saveData(form: recurrent_bills) {
   emits('saveData', form);
@@ -30,6 +44,13 @@ function saveData(form: recurrent_bills) {
 
 function deleteData() {
   emits('deleteData');
+}
+
+function cleanData() {
+  props.form.label = '';
+  props.form.key = '';
+  labelError.value = '';
+  keyError.value = '';
 }
 
 watch(
@@ -48,16 +69,20 @@ watch(
         Nome
       </el-row>
       <el-row>
-        <el-form-item class="full-width" >
-          <el-input v-model="form.label" placeholder="Nome" type="text"></el-input>
+        <el-form-item class="full-width" :error="labelError">
+          <el-input v-model="form.label" placeholder="Nome" type="text" 
+            @blur="() => validateForm()" @input="() => labelError = ''">
+          </el-input>
         </el-form-item>
       </el-row>
       <el-row>
         Tags
       </el-row>
       <el-row>
-        <el-form-item class="full-width">
-          <el-input v-model="form.key" placeholder="Tags" type="text"></el-input>
+        <el-form-item class="full-width" :error="keyError">
+          <el-input v-model="form.key" placeholder="Tags" type="text" 
+            @blur="() => validateForm()" @input="() => keyError = ''">
+          </el-input>
         </el-form-item>
       </el-row>
     </el-form>
@@ -66,8 +91,13 @@ watch(
         <el-col :span="12" v-if="isEditDialog">
           <el-button class="full-width" type="danger" @click="deleteData">Deletar</el-button>
         </el-col>
+        <el-col :span="12" v-if="!isEditDialog">
+          <el-button class="full-width" @click="cleanData">Limpar</el-button>
+        </el-col>
         <el-col :span="12">
-          <el-button class="full-width" type="primary" @click="saveData">{{ isEditDialog ? 'Salvar' : 'Criar' }}</el-button>
+          <el-button class="full-width" type="primary" :disabled="!form.label || !form.key"
+          @click="saveData">{{ isEditDialog ? 'Salvar' : 'Criar' }}
+          </el-button>
         </el-col>
       </el-row>
     </template>
