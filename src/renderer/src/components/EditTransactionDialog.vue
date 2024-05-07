@@ -134,6 +134,58 @@ function cancel() {
             </el-form-item>
           </el-row>
         </el-col>
+        <el-col :span="12">
+          <el-row>
+            Método de pagamento
+          </el-row>
+          <el-row>
+            <el-form-item>
+              <el-select v-model="form.method_payment" 
+              :placeholder="isCreditTransaction ? 'Crédito' : 'Selecione'" :disabled="isCreditTransaction">
+                <el-option label="Débito" value="debito"></el-option>
+                <el-option label="PIX" value="pix"></el-option>
+                <el-option label="Boleto" value="boleto"></el-option>
+                <el-option label="Saque" value="saque"></el-option>
+                <el-option label="TED/DOC" value="ted/doc"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-row>
+        </el-col>
+        <el-row :gutter="5" class="full-width">
+          <el-col :span="20">
+            <el-row>
+              Impacto
+            </el-row>
+            <el-row>
+              <el-form-item class="full-width">
+                <el-select v-model="form.impact" placeholder="Selecione" class="full-width">
+                  <el-option label="Essencial" value="Essencial"></el-option>
+                  <el-option label="Não Essencial" value="Não Essencial"></el-option>
+                  <el-option label="Investimento" value="Investimento"></el-option>
+                  <el-option label="Luxo" value="Luxo"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-row>
+          </el-col>
+          <el-col :span="2">
+            <el-row>
+              Recorrente?
+            </el-row>
+            <el-row>
+              <el-form-item>
+                <el-checkbox v-model="form.recurrent"></el-checkbox>
+              </el-form-item>
+            </el-row>
+          </el-col>
+        </el-row>
+        <el-row class="full-width">
+          <el-row>
+            Comentários
+          </el-row>
+          <el-form-item class="full-width">
+            <el-input v-model="form.comments" placeholder="Comentários"></el-input>
+          </el-form-item>
+        </el-row>
       </el-row>
     </el-form>
     <template #footer>
