@@ -1466,10 +1466,10 @@ electron@^27.0.2:
     "@types/node" "^18.11.18"
     extract-zip "^2.0.1"
 
-element-plus@^2.6.3:
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/element-plus/-/element-plus-2.7.0.tgz#1d72b06946c46a6f18e5315610b7f0147b8efb24"
-  integrity sha512-WAiaFLavuWFxof9qwkC27jvkh9nRcNnB506g1vvJSiVaVqjCBWUFCIyJKeN11M1qcv2cS5VV5PfSLjTIkrw87A==
+element-plus@^2.7.1:
+  version "2.7.2"
+  resolved "https://registry.yarnpkg.com/element-plus/-/element-plus-2.7.2.tgz#a5361ab0de49ea1e3c91955e4da3916a358b3bcf"
+  integrity sha512-AdEzBU/A68iUleio0MkQ46JeU5SeQvFFd915GJFScJmUEo5AmYg3OQ4pVjcu+p3b3Nupg9MC5Wa4xjAiC51kUg==
   dependencies:
     "@ctrl/tinycolor" "^3.4.1"
     "@element-plus/icons-vue" "^2.3.1"
