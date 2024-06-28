@@ -18,7 +18,7 @@
     "@element-plus/icons-vue": "^2.3.1",
     "@supabase/supabase-js": "^2.41.1",
     "dotenv": "^16.3.1",
-    "echarts": "^5.5.0",
+    "echarts": "^5.5.1",
     "element-plus": "^2.6.3",
     "lodash": "^4.17.21",
     "vue": "^3.4.22",
