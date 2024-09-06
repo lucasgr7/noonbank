@@ -16,13 +16,13 @@
   "dependencies": {
     "@electron-toolkit/utils": "^2.0.1",
     "@element-plus/icons-vue": "^2.3.1",
-    "@supabase/supabase-js": "^2.41.1",
+    "@supabase/supabase-js": "^2.42.7",
     "dotenv": "^16.3.1",
-    "echarts": "^5.5.0",
-    "element-plus": "^2.6.3",
+    "echarts": "^5.5.1",
+    "element-plus": "^2.7.1",
     "lodash": "^4.17.21",
     "vue": "^3.4.22",
-    "vue-echarts": "^6.6.1"
+    "vue-echarts": "^6.7.0"
   },
   "devDependencies": {
     "@electron-toolkit/preload": "^2.0.0",
