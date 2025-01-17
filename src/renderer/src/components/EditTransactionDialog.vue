@@ -142,6 +142,7 @@ function cancel() {
             <el-form-item>
               <el-select v-model="form.method_payment" 
               :placeholder="isCreditTransaction ? 'Crédito' : 'Selecione'" :disabled="isCreditTransaction">
+                <el-option label="Crédito" value="credito"></el-option>
                 <el-option label="Débito" value="debito"></el-option>
                 <el-option label="PIX" value="pix"></el-option>
                 <el-option label="Boleto" value="boleto"></el-option>

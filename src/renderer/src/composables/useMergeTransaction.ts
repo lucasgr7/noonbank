@@ -27,7 +27,8 @@ export function useMergeTransaction(dates: Ref<{startDate: Date, endDate: Date}>
   const { accTransactions, 
     totalAccTransactions, 
     updateAccountCategory,
-    searchAccountTransaction } = useAcountTransactions(dates);
+    searchAccountTransaction,
+    deleteAccountTransaction } = useAcountTransactions(dates);
 
   const mergeData = computed(() => {
 
@@ -92,5 +93,14 @@ export function useMergeTransaction(dates: Ref<{startDate: Date, endDate: Date}>
     const resultAccount = searchAccountTransaction(query);
     return Promise.all([resultCreditCard, resultAccount]);
   }
-  return {mergeData, totalTransactions, search, totalAccTransactions, accTransactions, transactions, updateAccountCategory, updateCreditCardCategory}
+  return {mergeData, 
+    totalTransactions, 
+    search, 
+    totalAccTransactions, 
+    accTransactions, 
+    transactions, 
+    updateAccountCategory, 
+    updateCreditCardCategory,
+    deleteAccountTransaction
+  }
 }

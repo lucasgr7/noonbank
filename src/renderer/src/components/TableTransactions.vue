@@ -5,7 +5,7 @@ import { usePeriod } from '../composables/period';
 import { TypeMergeData, useMergeTransaction } from '../composables/useMergeTransaction';
 import { moneyFormatter, timeFormatter } from '../helper';
 import { useCategories } from '../composables/useCategories';
-import { ElNotification } from 'element-plus';
+import { ElMessageBox, ElNotification } from 'element-plus';
 import CategoryTag from './CategoryTag.vue';
 import { useTable } from '../composables/useTable';
 import Tableheader from './Tableheader.vue';
@@ -17,6 +17,7 @@ const { dates } = usePeriod();
 const { mergeData,
   updateAccountCategory,
   updateCreditCardCategory,
+  deleteAccountTransaction,
   search } = useMergeTransaction(dates);
 const { getCategories, categories } = useCategories();
 
@@ -76,9 +77,33 @@ onMounted(() => {
 })
 
 //FOR EDIT DIALOG
-function editTransaction(row: TypeMergeData) {
+function handleEditTransaction(row: TypeMergeData) {
   selectedRowData.value = row;
   isEditDialogVisible.value = true;
+}
+
+const log = ref();
+
+function handleOpenDeleteDialog(row: TypeMergeData) {
+  // validate if the user wants to delete with a dialog from element-plus
+  ElMessageBox.confirm('Tem certeza que deseja deletar essa transação?', 'Aviso', {
+    confirmButtonText: 'Sim',
+    cancelButtonText: 'Não',
+    type: 'warning'
+  }).then(async () => {
+    log.value = await deleteAccountTransaction(row.id);
+    ElNotification({
+      title: 'Success',
+      message: 'Transação deletada com sucesso!',
+      type: 'success'
+    });
+  }).catch(() => {
+    ElNotification({
+      title: 'Info',
+      message: 'Transação não deletada',
+      type: 'info'
+    });
+  });
 }
 
 async function updateTransaction(form: TypeMergeData) {
@@ -125,11 +150,11 @@ async function updateTransaction(form: TypeMergeData) {
 </script>
 <template>
   <Tableheader title="Transações" @search="handleSearch" />
-  <el-table id="table-transactions" @sort-change="columnSort" @row-click="editTransaction" :data="chunckedData"
+  <el-table id="table-transactions" @sort-change="columnSort" :data="chunckedData"
     style="width: 100%" class="table">
     <el-table-column sortable prop="signal" label="Tipo" :width="70"></el-table-column>
-    <el-table-column sortable prop="description" label="Descrição" :width="300"></el-table-column>
-    <el-table-column sortable prop="amount" :formatter="moneyFormatter" :width="100" label="Montante"></el-table-column>
+    <el-table-column sortable prop="description" label="Descrição" :width="380"></el-table-column>
+    <el-table-column sortable prop="amount" :formatter="moneyFormatter" :width="180" label="Montante"></el-table-column>
     <el-table-column sortable prop="categoryId" label="Categoria" :width="130">
       <template #default="scope">
         <SelectCategory v-if="!scope.row.categoryId && scope.row.typeValue !== 'plus'" :categories="categories"
@@ -140,7 +165,11 @@ async function updateTransaction(form: TypeMergeData) {
         </span>
       </template>
     </el-table-column>
-    <el-table-column sortable prop="time" label="Data" :formatter="timeFormatter"></el-table-column>
+    <el-table-column sortable prop="time"  :width="100" label="Data" :formatter="timeFormatter"></el-table-column>
+    <el-table-column sortable prop="method_payment" :width="110" label="Pagamento"></el-table-column>
+    <el-table-column v-slot="scope">
+      <el-button size="small" type="info" @click="() => handleEditTransaction(scope.row)">Editar</el-button>
+      <el-button size="small" type="danger" @click="() => handleOpenDeleteDialog(scope.row)">Deletar</el-button></el-table-column>
   </el-table>
   <EditTransactionDialog v-model="isEditDialogVisible" :form="selectedRowData" title="Editar Transação"
     :isEditDialog="true" :isCreditTransaction="selectedRowData.type === 'credit'"
@@ -155,7 +184,7 @@ async function updateTransaction(form: TypeMergeData) {
   </el-row>
   <TableFooter @current-change="handleCurrentChange" @size-change="handleSizeChange" :total="totalNumerOfLines"
     :page-size="pageSize" :current-page="currentPage" />
-
+{{ log }}
 </template>
 <style lang="scss">
 #transactions-table {

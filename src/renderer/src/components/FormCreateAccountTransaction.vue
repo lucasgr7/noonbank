@@ -10,6 +10,7 @@ const { categories, getCategories } = useCategories();
 const { insertAccountTransanction } = useAcountTransactions(null);
 
 const emits = defineEmits(['close']);
+const pickDate = ref();
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -88,7 +89,6 @@ const save =  async () => {
       message: 'Account transaction created',
       type: 'success'
     });
-    emits('close');
     handleClean();
 
   } else {
@@ -116,7 +116,7 @@ onMounted(() => {
           </el-row>
           <el-row>
             <el-form-item class="full-width">
-              <el-date-picker v-model="form.postdate" type="date" placeholder="Selecione a data" format="DD/MM/YYYY"
+              <el-date-picker ref="pickDate" v-model="form.postdate" type="date" placeholder="Selecione a data" format="DD/MM/YYYY"
                 style="width: 100%;">
               </el-date-picker>
             </el-form-item>
@@ -171,6 +171,7 @@ onMounted(() => {
           <el-row>
             <el-form-item>
               <el-select v-model="form.method_payment" placeholder="Selecione">
+                <el-option label="Crédito" value="crebito"></el-option>
                 <el-option label="Débito" value="debito"></el-option>
                 <el-option label="PIX" value="pix"></el-option>
                 <el-option label="Boleto" value="boleto"></el-option>

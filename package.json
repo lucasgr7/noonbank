@@ -1,7 +1,7 @@
 {
   "name": "noonbank",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.4.0",
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",

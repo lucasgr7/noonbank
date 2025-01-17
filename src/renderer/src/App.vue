@@ -36,11 +36,8 @@ const TABS = {
             </el-col>
           </el-row>
           <el-row :gutter="10">
-            <el-col :span="14">
+            <el-col :span="24">
               <TableTransactions />
-            </el-col>
-            <el-col :span="10">
-              <ChartInvestments />
             </el-col>
           </el-row>
         </el-tab-pane>

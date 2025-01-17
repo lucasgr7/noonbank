@@ -11,6 +11,8 @@ import FormRecurrentBills from './FormRecurrentBills.vue';
 import { useRecurrentBills } from '@renderer/composables/useRecurrentBills';
 import { ElNotification } from 'element-plus';
 import _ from 'lodash';
+import { onMounted, onBeforeUnmount } from 'vue';
+
 
 const { selectedMonth } = usePeriod();
 const isFormCreateTag = ref(false);
@@ -82,6 +84,19 @@ async function handleCreate(){
   handleRefresh();
 }
 
+function handleKeydown(e) {
+  if (e.ctrlKey && e.key.toLowerCase() === 'i') {
+    showCreateAccountTransaction();
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeydown);
+});
 </script>
 
 <template>

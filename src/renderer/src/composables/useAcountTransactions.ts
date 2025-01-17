@@ -91,6 +91,14 @@ export const useAcountTransactions = (dates?: Ref<{startDate: Date, endDate: Dat
     fetchTotalCount();
   }
 
+  async function deleteAccountTransaction(id: string){
+    const table = "account_transactions";
+    return await supabase
+      .from(table)
+      .delete()
+      .match({ id: id });
+  }
+
   if(dates !== null){
     watch(() => dates.value, async (newDate) => {
       if(!newDate) return;
@@ -120,5 +128,6 @@ export const useAcountTransactions = (dates?: Ref<{startDate: Date, endDate: Dat
     totalAccTransactions, 
     updateAccountCategory, 
     insertAccountTransanction,
-    searchAccountTransaction}
+    searchAccountTransaction,
+    deleteAccountTransaction}
 }
