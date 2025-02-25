@@ -64,8 +64,8 @@ function handleChangePrimaryCateogry(selectedCategory: number, row: TypeMergeDat
   }
 }
 
-function handleSearch(query: string) {
-  search(query);
+function handleSearch(query: string, selectedMonth?: Date) {
+  search(query, selectedMonth);
 }
 
 function handleClearCategory(row: TypeMergeData) {

@@ -73,9 +73,11 @@ export const useAcountTransactions = (dates?: Ref<{startDate: Date, endDate: Dat
        
   }
 
-  async function searchAccountTransaction(query: string){
+  async function searchAccountTransaction(query: string, selectedMonth?: Date){
     const table = "account_transactions";
-    const { data } = await supabase
+    
+    // Start building the base query with common conditions
+    let baseQuery = supabase
       .from(table)
       .select("*")
       .neq("title", "Dinheiro resgatado")
@@ -83,11 +85,24 @@ export const useAcountTransactions = (dates?: Ref<{startDate: Date, endDate: Dat
       .neq("title", "Pagamento da fatura")
       .not("detail", "ilike", "AVENUE SECURITIES DTVM LTDA%")
       .not("detail", "ilike", "Lucas Garcia%")
-      .ilike("detail", `%${query}%`)
-      .order("postdate", { ascending: false })
+      .ilike("detail", `%${query}%`);
+  
+    if(selectedMonth){
+      // Set selectedMonth to the first day of its month at midnight
+      selectedMonth = new Date(selectedMonth);
+      selectedMonth.setDate(1);
+      selectedMonth.setHours(0, 0, 0, 0);
+      const lastDay = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1, 0);
+      baseQuery = baseQuery
+        .gte("postdate", selectedMonth.toJSON())
+        .lte("postdate", lastDay.toJSON());
+    }
+  
+    // Add ordering condition
+    const { data } = await baseQuery.order("postdate", { ascending: false });
     accTransactions.value = transform(data);
-
-    // Fetch total count if needed (only once or when data changes)
+  
+    // Fetch total count if needed
     fetchTotalCount();
   }
 

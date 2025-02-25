@@ -88,9 +88,9 @@ export function useMergeTransaction(dates: Ref<{startDate: Date, endDate: Date}>
     return merged as TypeMergeData[];
   });
 
-  function search(query: string){
-    const resultCreditCard = searchCreditCard(query);
-    const resultAccount = searchAccountTransaction(query);
+  function search(query: string, selectedMonth?: Date){
+    const resultCreditCard = searchCreditCard(query, selectedMonth);
+    const resultAccount = searchAccountTransaction(query, selectedMonth);
     return Promise.all([resultCreditCard, resultAccount]);
   }
   return {mergeData, 

@@ -26,6 +26,16 @@ export interface Transaction {
   comments: string | null;
 }
 
+// New helper function to build and execute transaction queries
+async function fetchTransactions(query: string | null = null, startDate?: Date, endDate?: Date) {
+  let q = supabase.from("transactions").select("*").order("time", { ascending: false });
+  if (query) q = q.ilike("description", `%${query}%`);
+  if (startDate) q = q.gte("time", startDate.toJSON());
+  if (endDate) q = q.lte("time", endDate.toJSON());
+  const { data } = await q;
+  return data;
+}
+
 export const useCreditCardTransactions = (dates: Ref<{startDate: Date, endDate: Date}>) => {
   const transactions = ref([] as Transaction[]);
   const totalTransactions = ref(0);
@@ -65,43 +75,24 @@ export const useCreditCardTransactions = (dates: Ref<{startDate: Date, endDate: 
   }
 
 
-  async function searchCreditCard(query: string){
-    const table = "transactions";
-    const { data } = await supabase
-      .from(table)
-      .select("*")
-      .order("time", { ascending: false })
-      .ilike("description", `%${query}%`)
-    transactions.value = transform(data);
-
-    // Fetch total count if needed (only once or when data changes)
+  async function searchCreditCard(query: string, selectedMonth?: Date) {
+    if (selectedMonth) {
+      selectedMonth.setDate(1);
+      selectedMonth.setHours(0, 0, 0, 0);
+      const lastDay = new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1, 0);
+      transactions.value = transform(await fetchTransactions(query, selectedMonth, lastDay));
+    } else {
+      transactions.value = transform(await fetchTransactions(query));
+    }
     fetchTotalCount();
   }
 
   watch(() => dates.value, async (newDate) => {
-    if(!newDate) return;
-    const table = "transactions";
-    // add 23:59:59 to endDate
+    if (!newDate) return;
     newDate.endDate.setHours(23, 59, 59, 999);
-    const { data } = await supabase
-      .from(table)
-      .select("*")
-      .gte("time", newDate.startDate.toJSON())
-      .lte("time", newDate.endDate.toJSON())
-      .order("time", { ascending: false });
-    // check if has no property data.data pass data to transform
-    if(_.has(data, 'data')){
-      transactions.value = transform(data.data);
-    }
-    else{
-      transactions.value = transform(data);
-    }
-
-    // Fetch total count if needed (only once or when data changes)
+    transactions.value = transform(await fetchTransactions(null, newDate.startDate, newDate.endDate));
     fetchTotalCount();
-    },
-    { immediate: true, deep: true }
-  );
+  }, { immediate: true, deep: true });
   
-  return { transactions, totalTransactions, searchCreditCard, updateCreditCardCategory}
+  return { transactions, totalTransactions, searchCreditCard, updateCreditCardCategory }
 };
