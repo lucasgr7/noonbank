@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import ChartCategory from './components/ChartCategory.vue';
-import ChartInvestments from './components/ChartInvestments.vue';
 import ChartTransactions from './components/ChartTransactions.vue';
-import GroupCards from './components/GroupCards.vue';
 import HeaderView from './components/HeaderView.vue'
 import ReccurentBills from './components/ReccurentBills.vue';
-import TableTopStocks from './components/TableTopStocks.vue';
 import TableTransactions from './components/TableTransactions.vue';
+import MetaGoals from './components/MetaGoals.vue';
+import MetaProgress from './components/MetaProgress.vue';
 
 const activeTab = ref();
 const TABS = {
@@ -35,23 +34,19 @@ const TABS = {
               <ChartCategory />
             </el-col>
           </el-row>
+          <el-row>
+            <MetaGoals />
+          </el-row>
           <el-row :gutter="10">
             <el-col :span="24">
               <TableTransactions />
             </el-col>
           </el-row>
-        </el-tab-pane>
-        <el-tab-pane label="Investimentos">
-          <div v-if="activeTab === TABS.INVESTMENTS">
-            <el-row>
-              <GroupCards />
-            </el-row>
-            <el-row :gutter="10" style="margin-top: 8px">
-              <el-col :span="12">
-                <TableTopStocks />
-              </el-col>
-            </el-row>
-          </div>
+          <el-row justify="end">
+            <el-col :span="8">
+              <MetaProgress />
+            </el-col>
+          </el-row>
         </el-tab-pane>
       </el-tabs>
     </el-main>

@@ -19,33 +19,42 @@ export interface TypeMergeData {
   method_payment?: string;
 }
 
-export function useMergeTransaction(dates: Ref<{startDate: Date, endDate: Date}>){
-  const { transactions, 
-    totalTransactions, 
+/**
+ * Converts a string or number to a number
+ * @param amount 
+ * @returns a parsed number
+ */
+const convertToNumber = (amount: string | number) => {
+  let result: number;
+  if (typeof amount === 'string') {
+    result = parseFloat(amount.replace(/,/g, ".").replace(/[^0-9.-]+/g, ""));
+  } else {
+    result = amount;
+  }
+  return parseFloat(result.toFixed(2));
+}
+
+export function useMergeTransaction(dates: Ref<{ startDate: Date, endDate: Date }>) {
+  const { transactions,
+    totalTransactions,
     updateCreditCardCategory,
-  searchCreditCard } = useCreditCardTransactions(dates);
-  const { accTransactions, 
-    totalAccTransactions, 
+    searchCreditCard } = useCreditCardTransactions(dates);
+  const { accTransactions,
+    totalAccTransactions,
     updateAccountCategory,
     searchAccountTransaction,
     deleteAccountTransaction } = useAcountTransactions(dates);
 
-  const mergeData = computed(() => {
-
-  const convertToNumber = (amount: string | number) => {
-    let result: number;
-    if (typeof amount === 'string') {
-      result = parseFloat(amount.replace(/,/g, ".").replace(/[^0-9.-]+/g, ""));
-    } else {
-      result = amount;
-    }
-    return parseFloat(result.toFixed(2));
-  }
+  /**
+   * A computed property that merges the transactions from the account and credit card
+   * @returns an array of TypeMergeData[]
+   */
+  const mergeData = computed((): TypeMergeData[] => {
     const acc = accTransactions.value.map((x: AccountTransaction) => {
       return {
         signal: checkType(x.title),
         typeValue: checkTypeValue(x.title),
-        description:  `${x.title} - ${x.detail}`,
+        description: `${x.title} - ${x.detail}`,
         amount: convertToNumber(x.amount),
         category: x.kind,
         time: normalizeDate(x.postdate), // assuming this is in the '2023-08-01' format
@@ -56,7 +65,7 @@ export function useMergeTransaction(dates: Ref<{startDate: Date, endDate: Date}>
         recurrent: x.recurrent,
         comments: x.comments,
         method_payment: x.method_payment
-      }
+      } as TypeMergeData;
     });
     const credit = transactions.value.map((x: Transaction) => {
       return {
@@ -73,7 +82,7 @@ export function useMergeTransaction(dates: Ref<{startDate: Date, endDate: Date}>
         impact: x.impact,
         recurrent: x.recurrent,
         comments: x.comments,
-      }
+      } as TypeMergeData;
     });
 
     // merge two arrays
@@ -85,21 +94,28 @@ export function useMergeTransaction(dates: Ref<{startDate: Date, endDate: Date}>
       const dateB = b.time;
       return dateB.getTime() - dateA.getTime();
     });
-    return merged as TypeMergeData[];
+    return merged;
   });
 
-  function search(query: string, selectedMonth?: Date){
+  /**
+   * Search for transactions in both credit card and account
+   * @param query text to search
+   * @param selectedMonth (optional) month to filter
+   * @returns 
+   */
+  function search(query: string, selectedMonth?: Date) {
     const resultCreditCard = searchCreditCard(query, selectedMonth);
     const resultAccount = searchAccountTransaction(query, selectedMonth);
     return Promise.all([resultCreditCard, resultAccount]);
   }
-  return {mergeData, 
-    totalTransactions, 
-    search, 
-    totalAccTransactions, 
-    accTransactions, 
-    transactions, 
-    updateAccountCategory, 
+  return {
+    mergeData,
+    totalTransactions,
+    search,
+    totalAccTransactions,
+    accTransactions,
+    transactions,
+    updateAccountCategory,
     updateCreditCardCategory,
     deleteAccountTransaction
   }

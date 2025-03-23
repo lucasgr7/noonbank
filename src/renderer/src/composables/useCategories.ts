@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { supabase } from './supabase';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 export interface Category{
   id: number;
@@ -50,10 +50,22 @@ export function useCategories() {
     }
   };
 
+  // key (id) - value (name) of category into an computed
+  const categoryLookupTable = computed(() => {
+    return categories.value?.reduce((acc, category) => {
+      acc[category.id] = {
+        name: category.name,
+        primaryColor: category.background_color,
+      };
+      return acc;
+    }, {} as Record<number, {name: string, primaryColor: string}>);
+  });
+
   return {
     categories,
     error,
     getCategories,
     insertCategory,
+    categoryLookupTable
   };
 }
