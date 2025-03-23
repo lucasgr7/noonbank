@@ -1,6 +1,5 @@
-
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { usePeriod } from '@renderer/composables/period';
 import { useMergeTransaction, TypeMergeData } from '@renderer/composables/useMergeTransaction';
 import { useCategories } from '@renderer/composables/useCategories';
@@ -59,13 +58,11 @@ const mergeDataByCategory = computed(() => {
   return result;
 });
 
-// Filtra categorias com currentSpent diferente de 0 e ignora "NOVA CASA"
+// Filtra categorias com currentSpent diferente de 0 
 const filteredMergeData = computed(() => {
   const result: Record<string, { maxSpent: number; minSpent: number; currentSpent: number }> = {};
   for (const key in mergeDataByCategory.value) {
-    if (mergeDataByCategory.value[key].currentSpent !== 0 && key.toUpperCase() !== 'NOVA CASA') {
-      result[key] = mergeDataByCategory.value[key];
-    }
+    result[key] = mergeDataByCategory.value[key];
   }
   return result;
 });
@@ -74,18 +71,15 @@ const filteredMergeData = computed(() => {
 const totalMinSpent = computed(() =>
   Object.values(filteredMergeData.value).reduce((acc, cur) => acc + cur.minSpent, 0)
 );
-const totalMaxSpent = computed(() =>
-  Object.values(filteredMergeData.value).reduce((acc, cur) => acc + cur.maxSpent, 0)
-);
+const totalMaxSpent = ref(20000);
 const totalCurrentSpent = computed(() =>
   Object.values(filteredMergeData.value).reduce((acc, cur) => acc + cur.currentSpent, 0)
 );
 const totalSpendingProgress = computed(() => {
   if (totalMaxSpent.value === totalMinSpent.value) return 100;
   let percentage =
-    ((totalCurrentSpent.value - totalMinSpent.value) / (totalMaxSpent.value - totalMinSpent.value)) * 100;
+    ((totalCurrentSpent.value) / (totalMaxSpent.value)) * 100;
   if (percentage < 0) percentage = 0;
-  if (percentage > 100) percentage = 100;
   return Math.round(percentage);
 });
 
@@ -97,30 +91,41 @@ const monthProgress = computed(() => Math.round((currentDay / totalDays) * 100))
 </script>
 
 <template>
-  <div class="meta-progress-container">
+  <el-row :gutter="20" style="margin-bottom: 8px;">
+    <el-col :span="12">
+      <el-card>
+        <h3>Progresso do Mês</h3>
+        <el-progress :percentage="monthProgress" class="progress-bar" style="height: 8px;" />
+        <div class="progress-info">{{ currentDay }} de {{ totalDays }} dias</div>
+    </el-card>
+    </el-col>
+    <el-col :span="12">
+      <el-card>
+          <h3>Percentual Orçamento gasto</h3>
+          <el-progress :percentage="totalSpendingProgress" class="progress-bar" style="height: 8px;" />
+          <el-row justify="center" class="progress-info">
+            <span class="f-blue">{{ formatBrazilianReal(totalMinSpent) }} - </span>
+            <b>{{ formatBrazilianReal(totalCurrentSpent) }} </b> -
+            <span class="f-red">{{ formatBrazilianReal(totalMaxSpent) }}</span>
+          </el-row>
+      </el-card>
+    </el-col>
+  </el-row>
     <!-- Barra de progresso do mês -->
-    <div class="meta-progress-card">
-      <h3>Progresso do Mês</h3>
-      <el-progress :percentage="monthProgress" class="progress-bar" style="height: 8px;" />
-      <div class="progress-info">{{ currentDay }} de {{ totalDays }} dias</div>
-    </div>
 
-    <!-- Barra de progresso total de gastos -->
-    <div class="meta-progress-card">
-      <h3>Progresso Total de Gastos</h3>
-      <el-progress :percentage="totalSpendingProgress" class="progress-bar" style="height: 8px;" />
-      <el-row justify="center" class="progress-info">
-        <span class="f-blue">{{ formatBrazilianReal(totalMinSpent) }} -  </span>
-        <b>{{ formatBrazilianReal(totalCurrentSpent) }}  </b> - 
-        <span class="f-red">{{ formatBrazilianReal(totalMaxSpent) }}</span>
-      </el-row>
-    </div>
-  </div>
+  <!-- Barra de progresso total de gastos -->
 </template>
 
 
 
-<style scoped>
+<style scoped lang="scss">
+.el-card{
+  margin: 0;
+  padding: 0px;
+}
+.el-card__body{
+  padding: 0px !important;
+}
 .meta-progress-container {
   display: flex;
   flex-direction: column;
@@ -136,7 +141,8 @@ const monthProgress = computed(() => Math.round((currentDay / totalDays) * 100))
   display: flex;
   flex-direction: column;
   gap: 8px;
-  color: #2e7d32; /* verde */
+  color: #2e7d32;
+  /* verde */
 }
 
 .progress-bar {

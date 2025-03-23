@@ -17,12 +17,13 @@ const TABS = {
 </script>
 <template>
   <el-card id="body">
-    <HeaderView :title="'Relatório de Gastos'"/>
-    <hr/>
+    <HeaderView :title="'Relatório de Gastos'" />
+    <hr />
     <el-main>
       <!-- el-tabs investment and debt -->
       <el-tabs v-model="activeTab">
         <el-tab-pane label="Fluxo de caixa">
+          <MetaProgress />
           <el-row :gutter="10">
             <el-col :span="5">
               <ReccurentBills />
@@ -42,11 +43,6 @@ const TABS = {
               <TableTransactions />
             </el-col>
           </el-row>
-          <el-row justify="end">
-            <el-col :span="8">
-              <MetaProgress />
-            </el-col>
-          </el-row>
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -55,15 +51,15 @@ const TABS = {
 </template>
 
 <style lang="scss" scoped>
-#body{
+#body {
   margin: 30px 10px;
   max-width: 1280px;
 }
-.el-card{
+
+.el-card {
   border-radius: 5px;
   background: rgba(244, 245, 240, 1);
   background: linear-gradient(0deg, #f0f0ef 0%, #f0efef 100%);
 }
 
-// set var --el-color-primary to greens
-</style>s
+// set var --el-color-primary to greens</style>

@@ -51,7 +51,7 @@ const mergeDataByCategory = computed(() => {
   for (const categoryKey in grouping) {
     const monthEntries = Object.entries(grouping[categoryKey]);
     const allSums = monthEntries.map(([_, sum]) => sum);
-    const maxSpent = Math.max(...allSums);
+    const maxSpent = Math.max(...allSums) / 2;
     const currentSpent = grouping[categoryKey][currentYearMonth] || 0;
 
     // Filtra os meses que não são o mês atual.

@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+t pull<script lang="ts" setup>
 import EditTransactionDialog from './EditTransactionDialog.vue';
 import { onMounted, ref } from 'vue';
 import { usePeriod } from '../composables/period';
