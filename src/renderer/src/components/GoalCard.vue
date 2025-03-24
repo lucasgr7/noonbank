@@ -22,7 +22,6 @@ const computePercentage = (min: number, max: number, current: number): number =>
   if (max === min) return 100;
   let percentage = ((current - min) / (max - min)) * 100;
   if (percentage < 0) percentage = 0;
-  if (percentage > 100) percentage = 100;
   return Math.round(percentage);
 };
 
@@ -53,6 +52,22 @@ const cardStyle = computed(() => {
     };
   }
 });
+
+// New dynamic progress bar color function
+const progressBarColor = (percentage: number): string => {
+  if (percentage <= 100) {
+    const r = 0;
+    const g = Math.round((percentage / 100) * 255);
+    const b = Math.round(((100 - percentage) / 100) * 255);
+    return `rgb(${r}, ${g}, ${b})`;
+  } else {
+    const extra = Math.min(percentage - 100, 100);
+    const r = 255;
+    const g = Math.round(255 * ((100 - extra) / 100));
+    const b = 0;
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+};
 </script>
 
 <template>
@@ -70,7 +85,7 @@ const cardStyle = computed(() => {
           <el-progress
             :percentage="computePercentage(0, data.minSpent, data.currentSpent)"
             style="height: 8px;"
-            color="blue"
+            :color="progressBarColor(computePercentage(0, data.minSpent, data.currentSpent))"
           />
           <el-row justify="center">
             <div style="font-size: 14px; color: green; padding-top: 8px">
@@ -91,6 +106,7 @@ const cardStyle = computed(() => {
           <el-progress
             :percentage="computePercentage(data.minSpent, data.maxSpent, data.currentSpent)"
             style="height: 8px;"
+            :color="progressBarColor(computePercentage(data.minSpent, data.maxSpent, data.currentSpent))"
           />
         </el-col>
         <el-col :span="6" style="text-align: center;">
